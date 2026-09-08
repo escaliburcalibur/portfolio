@@ -1,6 +1,5 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { initSmoothScroll, refreshSmoothScroll } from './smoothScroll';
 import { initTextReveal } from './textReveal';
 import { initTextFx, watchTextResize } from './textFx';
 import { initScrollEffects } from './scrollEffects';
@@ -9,9 +8,9 @@ gsap.registerPlugin(ScrollTrigger);
 
 /**
  * Motion entry point. Runs on every `astro:page-load` so it survives the
- * View Transitions crossfade. Lenis and the resize watcher are set up once;
- * scroll effects and text effects are rebuilt per page. Every module is a
- * no-op under prefers-reduced-motion.
+ * View Transitions crossfade. Native scroll (no smoothing) — scroll effects and
+ * text effects are rebuilt per page. Every module is a no-op under
+ * prefers-reduced-motion.
  */
 
 let booted = false;
@@ -24,14 +23,13 @@ async function setupPage() {
   initScrollEffects();
   await initTextReveal(firstLoad); // block-wipe only on the first (hard) load
   initTextFx();
-  refreshSmoothScroll();
+  ScrollTrigger.refresh();
   firstLoad = false;
 }
 
 function run() {
   if (!booted) {
     booted = true;
-    initSmoothScroll();
     watchTextResize();
   }
 

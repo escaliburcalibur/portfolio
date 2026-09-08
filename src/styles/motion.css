@@ -1,5 +1,6 @@
-/* ── Motion: text hover effect + smooth scroll ──────────────
-   Behaviour lives in src/lib/motion/**. This file is only the paint. */
+/* ── Motion: text hover effect + load-in reveal ─────────────
+   Behaviour lives in src/lib/motion/**. This file is only the paint.
+   Scrolling is native (no smoothing). */
 
 [data-text-fx] {
   cursor: crosshair;
@@ -67,22 +68,4 @@
   [data-text-fx] {
     cursor: auto;
   }
-}
-
-/* ── Lenis ────────────────────────────────────────────────── */
-html.lenis,
-html.lenis body {
-  height: auto;
-}
-
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
-.lenis.lenis-stopped {
-  overflow: hidden;
 }
