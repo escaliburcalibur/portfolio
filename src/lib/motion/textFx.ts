@@ -1,15 +1,17 @@
 import { gsap } from 'gsap';
 import { getSplit, revertSplit } from './textSplit';
-import { FLASH_COLORS, rand, pick } from './palette';
 
 /**
- * Per-line hover effect: on mouseenter, a pulse ripples out from the centre of
- * the line (delay ∝ distance from centre) with yoyo. Each character briefly
- * flashes a colour from the accent set; some swap to a random glyph, some
- * sprout a technical `△x = NNpx` annotation and a 1px coloured outline, then
- * everything snaps back. This is one of two places the otherwise-monochrome
- * site uses colour, on purpose.
+ * Text hover effect — faithful port of the CodePen the owner supplied
+ * (Andrea Catanzaro, "bNgyqbp"), wired to our shared split and [data-text-fx]
+ * scope. On mouseenter over a line, every character ripples out from the
+ * centre (delay ∝ distance from centre): a colour flash from the accent set
+ * with yoyo, a ~50% chance to swap to a random glyph, and a ~33% chance to
+ * gain a `△x = NNpx` annotation and a 1px coloured border, all restored
+ * on complete.
  */
+
+const FLASH_COLORS = ['#85AF00', '#FFCC00', '#FB9CFD', '#A19BFF', '#FF4C00'];
 
 const GLYPHS =
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<>%&@!#$^*()-_+={}[]|\\:;"?/~`'.split(
@@ -22,53 +24,62 @@ function wire(el: HTMLElement) {
   if (wired.has(el)) return;
   wired.add(el);
 
-  const { lines, chars } = getSplit(el);
+  const { split } = getSplit(el);
+  const lines = split.lines as HTMLElement[];
+  const chars = split.chars as HTMLElement[];
 
-  for (const line of lines) {
-    const lineChars = chars.filter((c) => line.contains(c));
-    const mid = (lineChars.length - 1) / 2;
-
-    const reset = (char: HTMLElement) => {
-      char.textContent = char.dataset.orig ?? '';
-      char.style.outline = '';
-      char.style.color = '';
-    };
-
+  lines.forEach((line) => {
     line.addEventListener('mouseenter', () => {
-      lineChars.forEach((char, i) => {
-        gsap.killTweensOf(char);
-        reset(char);
+      const charsInLine = chars.filter((char) => line.contains(char));
+      const totalChars = charsInLine.length;
+      const middleIndex = (totalChars - 1) / 2;
 
-        gsap.to(char, {
-          color: pick(FLASH_COLORS),
-          duration: 0.3,
-          ease: 'power3.out',
-          delay: Math.abs(i - mid) * 0.03,
-          repeat: 1,
-          yoyo: true,
-          overwrite: 'auto',
-          onStart: () => {
-            if (Math.random() < 0.4) {
-              char.textContent = GLYPHS[rand(GLYPHS.length)];
-            }
-            if (Math.random() < 0.26) {
-              const detail = document.createElement('span');
-              detail.className = 'fx-detail';
-              detail.textContent = `△x = ${Math.round(
-                char.getBoundingClientRect().width,
-              )}px`;
-              char.appendChild(detail);
-            }
-            if (Math.random() < 0.26) {
-              char.style.outline = `1px solid ${pick(FLASH_COLORS)}`;
-            }
+      charsInLine.forEach((char, index) => {
+        if (!char.dataset.orig) char.dataset.orig = char.textContent ?? '';
+
+        const distanceFromCenter = Math.abs(index - middleIndex);
+
+        gsap.fromTo(
+          char,
+          { color: '#fff' },
+          {
+            color: gsap.utils.random(FLASH_COLORS),
+            ease: 'power3.out',
+            duration: 0.3,
+            delay: distanceFromCenter * 0.03,
+            repeat: 1,
+            yoyo: true,
+            overwrite: 'auto',
+
+            onStart: () => {
+              const randomNum = gsap.utils.random(['0', '1']);
+              const randomNumThree = gsap.utils.random(['0', '1', '2']);
+
+              if (randomNum === '1') {
+                char.textContent = gsap.utils.random(GLYPHS);
+              }
+
+              if (randomNumThree === '1') {
+                const detail = document.createElement('span');
+                detail.classList.add('detail-size');
+                detail.textContent = `△x = ${char.clientWidth}px`;
+                char.appendChild(detail);
+              }
+
+              if (randomNumThree === '1') {
+                char.style.border = `1px solid ${gsap.utils.random(FLASH_COLORS)}`;
+              }
+            },
+
+            onComplete: () => {
+              char.textContent = char.dataset.orig ?? '';
+              char.style.border = 'none';
+            },
           },
-          onComplete: () => reset(char),
-          onInterrupt: () => reset(char),
-        });
+        );
       });
     });
-  }
+  });
 }
 
 export function initTextFx(root: ParentNode = document) {

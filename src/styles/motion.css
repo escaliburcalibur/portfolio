@@ -6,11 +6,21 @@
   cursor: crosshair;
 }
 
-/* Split character. Colour is animated inline by GSAP on hover; this just
-   makes the box able to host the outline and the annotation. */
+/* Split character. Colour and border are animated inline by GSAP on hover;
+   position:relative lets it host the annotation. */
 .fx-char {
   position: relative;
   display: inline-block;
+}
+
+/* The `△x = NNpx` annotation a character can sprout mid-hover. */
+.detail-size {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  min-width: 50px;
+  height: 1px;
+  font-size: 11px;
 }
 
 /* ── Load-in reveal ───────────────────────────────────────── */
@@ -45,23 +55,6 @@
   pointer-events: none;
   visibility: hidden;
   will-change: transform;
-}
-
-/* Technical annotation that some characters sprout mid-pulse. */
-.fx-detail {
-  position: absolute;
-  inset-inline-start: 0;
-  inset-block-end: -0.85em;
-  inline-size: 100%;
-  min-inline-size: 50px;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: var(--weight-regular);
-  letter-spacing: 0;
-  line-height: 1;
-  color: var(--color-content-faint);
-  white-space: nowrap;
-  pointer-events: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
