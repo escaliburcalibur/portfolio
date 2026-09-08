@@ -1,0 +1,88 @@
+---
+import { render } from 'astro:content';
+import Shell from '@layouts/Shell.astro';
+import { getJournal } from '@lib/content';
+
+export async function getStaticPaths() {
+  const journal = await getJournal();
+  return journal.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const iso = entry.data.date.toISOString().slice(0, 10);
+const date = entry.data.date.toLocaleDateString('en-GB', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+
+const seo = {
+  title: entry.data.seo?.metaTitle ?? entry.data.title,
+  description: entry.data.seo?.metaDescription ?? entry.data.excerpt,
+  path: `/journal/${entry.id}`,
+  type: 'article',
+};
+---
+
+<Shell {...seo}>
+  <main id="main" class="post">
+    <p class="post__date"><time datetime={iso}>{date}</time></p>
+    <h1 class="post__title">{entry.data.title}</h1>
+    <div class="post__body"><Content /></div>
+    {
+      entry.data.project && (
+        <a class="post__link" href={`/${entry.data.project}`}>
+          View the project
+        </a>
+      )
+    }
+    <a class="post__back" href="/journal">All updates</a>
+  </main>
+</Shell>
+
+<style>
+  .post {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    inline-size: min(100%, 60ch);
+  }
+
+  .post__date {
+    font-size: var(--text-meta);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-content-faint);
+  }
+
+  .post__title {
+    font-size: var(--text-display);
+  }
+
+  .post__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    font-size: var(--text-body);
+  }
+
+  .post__link,
+  .post__back {
+    align-self: start;
+    font-size: var(--text-meta);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-content-muted);
+    border-bottom: 1px solid var(--color-line);
+    padding-bottom: 2px;
+  }
+
+  .post__link:hover,
+  .post__back:hover {
+    color: var(--color-content);
+  }
+</style>

@@ -1,0 +1,82 @@
+---
+import { DISCIPLINES, DISCIPLINE_LABELS } from '@lib/content';
+---
+
+<div class="filter-bar" role="group" aria-label="Filter work by discipline">
+  <button
+    type="button"
+    class="filter-bar__btn"
+    data-filter="all"
+    aria-pressed="true"
+  >
+    All
+  </button>
+  {
+    DISCIPLINES.map((d) => (
+      <button
+        type="button"
+        class="filter-bar__btn"
+        data-filter={d}
+        aria-pressed="false"
+      >
+        {DISCIPLINE_LABELS[d]}
+      </button>
+    ))
+  }
+</div>
+
+<style>
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-2xs) var(--spacing-sm);
+  }
+
+  .filter-bar__btn {
+    padding: 0;
+    background: none;
+    border: none;
+    color: var(--color-content-faint);
+    font: inherit;
+    font-size: var(--text-meta);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+
+  .filter-bar__btn:hover,
+  .filter-bar__btn[aria-pressed='true'] {
+    color: var(--color-content);
+  }
+</style>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('.filter-bar');
+  const cards = [...document.querySelectorAll<HTMLElement>('[data-work-card]')];
+
+  function applyFilter(value: string) {
+    for (const card of cards) {
+      const tags = (card.dataset.disciplines ?? '').split(' ');
+      card.hidden = value !== 'all' && !tags.includes(value);
+    }
+    for (const btn of bar?.querySelectorAll('[data-filter]') ?? []) {
+      btn.setAttribute(
+        'aria-pressed',
+        String((btn as HTMLElement).dataset.filter === value),
+      );
+    }
+    const url = new URL(location.href);
+    if (value === 'all') url.searchParams.delete('filter');
+    else url.searchParams.set('filter', value);
+    history.replaceState(null, '', url);
+  }
+
+  bar?.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-filter]');
+    if (btn?.dataset.filter) applyFilter(btn.dataset.filter);
+  });
+
+  const initial = new URL(location.href).searchParams.get('filter');
+  if (initial) applyFilter(initial);
+</script>

@@ -1,0 +1,20 @@
+{
+  "name": "UI/UX",
+  "order": 6,
+  "hero": "Digital products that are easy to maintain, not just to demo.",
+  "pitch": "Placeholder pitch. UX audits, product design, and design systems built for teams to keep.",
+  "keywords": [
+    "ui ux design",
+    "digital product design",
+    "ux design studio",
+    "design system"
+  ],
+  "faq": [
+    {
+      "q": "Do you work with in-house teams?",
+      "a": "Placeholder answer. Often — the deliverable is a system they can run."
+    }
+  ],
+  "featuredProjects": ["project-05"],
+  "testimonialFilterTag": "ui-ux"
+}

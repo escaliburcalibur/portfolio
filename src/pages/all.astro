@@ -1,0 +1,52 @@
+---
+import Shell from '@layouts/Shell.astro';
+import FilterBar from '@components/work/FilterBar.astro';
+import WorkCard from '@components/work/WorkCard.astro';
+import { getProjects } from '@lib/content';
+
+const projects = await getProjects();
+
+const seo = {
+  title: 'Work',
+  description:
+    'Selected work by David Bayón across branding, brand strategy, motion, 3D, web design, UI/UX and creative development.',
+  path: '/all',
+};
+---
+
+<Shell {...seo}>
+  <main id="main" class="work">
+    <header class="work__head">
+      <h1 class="work__title">Work</h1>
+      <FilterBar />
+    </header>
+
+    <div class="work__grid">
+      {projects.map((project) => <WorkCard project={project} />)}
+    </div>
+  </main>
+</Shell>
+
+<style>
+  .work {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+
+  .work__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .work__title {
+    font-size: var(--text-display);
+  }
+
+  .work__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+    gap: var(--spacing-md) var(--spacing-sm);
+  }
+</style>

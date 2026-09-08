@@ -4,7 +4,7 @@ import tseslint from 'typescript-eslint';
 import astro from 'eslint-plugin-astro';
 
 export default tseslint.config(
-  { ignores: ['dist/', '.astro/', 'node_modules/'] },
+  { ignores: ['dist/', '.astro/', 'node_modules/', 'tina/__generated__/'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   ...astro.configs.recommended,

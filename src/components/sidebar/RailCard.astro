@@ -1,26 +1,27 @@
 ---
 import Placeholder from '@components/Placeholder.astro';
-import type { ProjectSummary } from '@lib/projects';
+import type { Project } from '@lib/content';
 
 interface Props {
-  project: ProjectSummary;
+  project: Project;
   index: number;
 }
 const { project, index } = Astro.props;
+const { title, railDescription } = project.data;
 ---
 
 <a
   class="rail-card"
-  href={`/${project.slug}`}
+  href={`/${project.id}`}
   data-rail-card
-  data-slug={project.slug}
+  data-slug={project.id}
 >
   <span class="rail-card__thumb">
     <Placeholder label="" ratio="1 / 1" class="rail-card__ph" />
   </span>
   <span class="rail-card__text">
-    <span class="rail-card__title">{project.title}</span>
-    <span class="rail-card__desc">{project.railDescription}</span>
+    <span class="rail-card__title">{title}</span>
+    <span class="rail-card__desc">{railDescription}</span>
   </span>
   <span class="rail-card__index" aria-hidden="true"
     >{String(index + 1).padStart(2, '0')}</span
@@ -33,8 +34,7 @@ const { project, index } = Astro.props;
     grid-template-columns: 3.25rem 1fr auto;
     align-items: center;
     gap: var(--spacing-2xs);
-    padding: var(--spacing-3xs) var(--spacing-3xs) var(--spacing-3xs)
-      var(--spacing-3xs);
+    padding: var(--spacing-3xs);
     border-radius: var(--radius-card-sm);
     color: var(--color-content-muted);
     transition:

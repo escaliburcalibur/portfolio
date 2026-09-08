@@ -43,6 +43,10 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# ─── Tina CMS (generated) ────────────────────────────────
+tina/__generated__/
+public/admin/
+
 # ─── OS / editor cruft ───────────────────────────────────
 .DS_Store
 Thumbs.db

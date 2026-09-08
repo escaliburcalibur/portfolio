@@ -1,14 +1,14 @@
 ---
 import Placeholder from '@components/Placeholder.astro';
-import type { JournalEntry } from '@lib/journal';
+import type { JournalPost } from '@lib/content';
 
 interface Props {
-  entry: JournalEntry;
+  entry: JournalPost;
   withMedia?: boolean;
 }
 const { entry, withMedia = false } = Astro.props;
-
-const date = new Date(entry.date).toLocaleDateString('en-GB', {
+const iso = entry.data.date.toISOString().slice(0, 10);
+const date = entry.data.date.toLocaleDateString('en-GB', {
   day: 'numeric',
   month: 'long',
   year: 'numeric',
@@ -16,13 +16,11 @@ const date = new Date(entry.date).toLocaleDateString('en-GB', {
 ---
 
 <article class="update">
-  <p class="update__date">
-    <time datetime={entry.date}>{date}</time>
-  </p>
+  <p class="update__date"><time datetime={iso}>{date}</time></p>
   <h2 class="update__title">
-    <a href={`/journal/${entry.slug}`}>{entry.title}</a>
+    <a href={`/journal/${entry.id}`}>{entry.data.title}</a>
   </h2>
-  <p class="update__excerpt">{entry.excerpt}</p>
+  <p class="update__excerpt">{entry.data.excerpt}</p>
   {withMedia && <Placeholder label="" ratio="4 / 3" class="update__media" />}
 </article>
 

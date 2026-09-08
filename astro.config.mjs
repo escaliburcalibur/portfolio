@@ -15,10 +15,6 @@ export default defineConfig({
   build: { format: 'file' },
   integrations: [sitemap()],
   vite: {
-    plugins: [
-      // @ts-expect-error — Vite type-identity skew between @tailwindcss/vite's
-      // bundled Vite and Astro's own copy. Runtime/build are unaffected.
-      tailwindcss(),
-    ],
+    plugins: [tailwindcss()],
   },
 });

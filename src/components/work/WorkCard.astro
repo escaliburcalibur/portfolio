@@ -1,0 +1,58 @@
+---
+import Placeholder from '@components/Placeholder.astro';
+import type { Project } from '@lib/content';
+
+interface Props {
+  project: Project;
+}
+const { project } = Astro.props;
+const { title, railDescription, disciplines, year } = project.data;
+---
+
+<a
+  class="work-card"
+  href={`/${project.id}`}
+  data-work-card
+  data-disciplines={disciplines.join(' ')}
+>
+  <Placeholder label={title} ratio="4 / 3" class="work-card__media" />
+  <span class="work-card__meta">
+    <span class="work-card__title">{title}</span>
+    <span class="work-card__desc">{railDescription} · {year}</span>
+  </span>
+</a>
+
+<style>
+  .work-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2xs);
+    color: var(--color-content-muted);
+  }
+
+  .work-card :global(.work-card__media) {
+    transition: opacity var(--dur-fast) var(--ease-out);
+  }
+
+  .work-card__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .work-card__title {
+    font-size: var(--text-small);
+    color: var(--color-content);
+  }
+
+  .work-card__desc {
+    font-size: var(--text-meta);
+    color: var(--color-content-faint);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .work-card:hover :global(.work-card__media) {
+      opacity: 0.7;
+    }
+  }
+</style>

@@ -1,0 +1,20 @@
+{
+  "name": "Creative dev",
+  "order": 7,
+  "hero": "The interactive layer, built by the people who designed it.",
+  "pitch": "Placeholder pitch. Front-end for design-led sites, scroll and WebGL work, and prototypes that ship.",
+  "keywords": [
+    "creative developer",
+    "creative web development",
+    "webgl agency",
+    "interactive experience"
+  ],
+  "faq": [
+    {
+      "q": "What stack do you use?",
+      "a": "Placeholder answer. Whatever fits — usually lean, standards-first front-end."
+    }
+  ],
+  "featuredProjects": ["project-03"],
+  "testimonialFilterTag": "creative-dev"
+}

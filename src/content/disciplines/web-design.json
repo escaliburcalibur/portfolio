@@ -1,0 +1,20 @@
+{
+  "name": "Web design",
+  "order": 5,
+  "hero": "Fast, quiet websites that stay out of the way.",
+  "pitch": "Placeholder pitch. Editorial layouts, design systems for the web, and motion that earns its place.",
+  "keywords": [
+    "web design",
+    "web design studio",
+    "premium website design",
+    "editorial web design"
+  ],
+  "faq": [
+    {
+      "q": "Do you build what you design?",
+      "a": "Placeholder answer. Yes — design and front-end are one engagement."
+    }
+  ],
+  "featuredProjects": ["project-03"],
+  "testimonialFilterTag": "web-design"
+}

@@ -1,11 +1,12 @@
 ---
 import RailCard from '@components/sidebar/RailCard.astro';
-import { projects } from '@lib/projects';
+import { getProjects } from '@lib/content';
 
 /**
  * The project list that doubles as the primary navigation. Ordered by the
- * `projects` array for now; Phase 5 reorders it per visitor discipline profile.
+ * content `order` field for now; Phase 5 reorders it per visitor profile.
  */
+const projects = await getProjects();
 ---
 
 <nav class="rail" aria-label="Projects">

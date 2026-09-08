@@ -1,11 +1,12 @@
 ---
 import UpdateCard from '@components/home/UpdateCard.astro';
-import { journal } from '@lib/journal';
+import { getJournal } from '@lib/content';
 
 /**
  * "Studio updates" feed — masonry columns 3 → 2 (≤1280px) → 1 (≤1024px).
  * Chronological blend of launches and news, newest first. No footer follows.
  */
+const journal = await getJournal();
 ---
 
 <section class="updates" aria-label="Studio updates">

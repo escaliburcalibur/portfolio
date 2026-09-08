@@ -1,0 +1,48 @@
+---
+import Placeholder from '@components/Placeholder.astro';
+
+interface Props {
+  src?: string;
+  ratio?: string;
+  orientation?: 'landscape' | 'portrait';
+  caption?: string;
+}
+const {
+  src,
+  ratio = '1496 / 998',
+  orientation = 'landscape',
+  caption,
+} = Astro.props;
+---
+
+<figure class="slice-media" data-orientation={orientation}>
+  {
+    src ? (
+      <img src={src} alt={caption ?? ''} loading="lazy" decoding="async" />
+    ) : (
+      <Placeholder label="Media" ratio={ratio} />
+    )
+  }
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .slice-media {
+    margin: 0;
+    inline-size: 100%;
+  }
+
+  .slice-media :global(.ph),
+  .slice-media img {
+    inline-size: 100%;
+    border-radius: var(--radius-card);
+  }
+
+  .slice-media figcaption {
+    margin-block-start: var(--spacing-2xs);
+    font-size: var(--text-meta);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-content-faint);
+  }
+</style>

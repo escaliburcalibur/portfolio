@@ -1,0 +1,72 @@
+---
+import Placeholder from '@components/Placeholder.astro';
+
+interface Props {
+  items?: string[];
+  count?: number;
+  ratio?: string;
+}
+const { items = [], count = 3, ratio = '3 / 2' } = Astro.props;
+const slides =
+  items.length > 0
+    ? items
+    : Array.from({ length: count }, (_, i) => `#${i + 1}`);
+---
+
+<div
+  class="slice-gallery"
+  role="group"
+  aria-roledescription="carousel"
+  aria-label="Project gallery"
+>
+  <div class="slice-gallery__track" data-gallery-track>
+    {
+      slides.map((item, i) =>
+        items.length > 0 ? (
+          <img
+            class="slice-gallery__slide"
+            src={item}
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <div class="slice-gallery__slide">
+            <Placeholder label="Gallery" ratio={ratio} index={i + 1} />
+          </div>
+        ),
+      )
+    }
+  </div>
+</div>
+
+<style>
+  .slice-gallery {
+    inline-size: 100%;
+    overflow: hidden;
+    border-radius: var(--radius-card);
+  }
+
+  .slice-gallery__track {
+    display: flex;
+    gap: var(--spacing-2xs);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .slice-gallery__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .slice-gallery__slide {
+    flex: 0 0 min(88%, 60rem);
+    scroll-snap-align: start;
+  }
+
+  .slice-gallery__slide :global(.ph),
+  .slice-gallery__slide {
+    border-radius: var(--radius-card);
+  }
+</style>

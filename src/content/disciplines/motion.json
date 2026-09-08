@@ -1,0 +1,20 @@
+{
+  "name": "Motion",
+  "order": 3,
+  "hero": "Identity that behaves the same way it looks.",
+  "pitch": "Placeholder pitch. Motion systems, brand animation and the timing rules that keep a brand recognisable in movement.",
+  "keywords": [
+    "motion design",
+    "animation studio",
+    "motion graphics",
+    "brand in motion"
+  ],
+  "faq": [
+    {
+      "q": "Do you deliver a motion system or one-off animations?",
+      "a": "Placeholder answer. Usually a system, plus the first set of pieces built from it."
+    }
+  ],
+  "featuredProjects": ["project-02", "project-04"],
+  "testimonialFilterTag": "motion"
+}

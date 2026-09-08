@@ -1,0 +1,24 @@
+{
+  "name": "Branding",
+  "order": 1,
+  "hero": "Identity systems that hold up in the wild.",
+  "pitch": "Placeholder pitch. Logotype, type, colour, art direction and the rules that keep it coherent as it scales.",
+  "keywords": [
+    "branding studio",
+    "visual identity design",
+    "brand identity design",
+    "brand guidelines"
+  ],
+  "faq": [
+    {
+      "q": "What does a branding engagement include?",
+      "a": "Placeholder answer. Typically research, positioning, identity design and a guidelines document."
+    },
+    {
+      "q": "How long does it take?",
+      "a": "Placeholder answer."
+    }
+  ],
+  "featuredProjects": ["project-01", "project-06", "project-02"],
+  "testimonialFilterTag": "branding"
+}

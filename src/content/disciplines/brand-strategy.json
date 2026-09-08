@@ -1,0 +1,20 @@
+{
+  "name": "Brand strategy",
+  "order": 2,
+  "hero": "Decide what you stand for before you draw a thing.",
+  "pitch": "Placeholder pitch. Positioning, architecture, messaging and the workshops that get everyone aligned.",
+  "keywords": [
+    "brand strategy",
+    "brand consultancy",
+    "brand positioning",
+    "brand architecture"
+  ],
+  "faq": [
+    {
+      "q": "Can strategy be a standalone project?",
+      "a": "Placeholder answer. Yes — it often is, and it makes the design work faster."
+    }
+  ],
+  "featuredProjects": ["project-06", "project-01"],
+  "testimonialFilterTag": "brand-strategy"
+}

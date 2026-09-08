@@ -1,13 +1,14 @@
 ---
 import Placeholder from '@components/Placeholder.astro';
-import { projects } from '@lib/projects';
+import { getProjects } from '@lib/content';
 
 /**
  * Single image panel with a fixed aspect ratio (not full-viewport). One layer
  * per project; hovering a rail card swaps the visible layer. "Gallery mode"
  * auto-cycles. Reduced-motion disables the auto-cycle and the crossfade.
  */
-const layers = projects;
+const layers = await getProjects();
+const first = layers[0];
 ---
 
 <section class="hero" data-hero aria-label="Featured work">
@@ -17,10 +18,14 @@ const layers = projects;
         <div
           class="hero__layer"
           data-hero-layer
-          data-slug={project.slug}
+          data-slug={project.id}
           data-selected={i === 0 ? 'true' : 'false'}
         >
-          <Placeholder label={project.title} ratio="1496 / 998" index={i + 1} />
+          <Placeholder
+            label={project.data.title}
+            ratio="1496 / 998"
+            index={i + 1}
+          />
         </div>
       ))
     }
@@ -28,7 +33,7 @@ const layers = projects;
 
   <div class="hero__meta">
     <span class="hero__caption" data-hero-caption>
-      {layers[0]?.title} — {layers[0]?.railDescription}
+      {first?.data.title} — {first?.data.railDescription}
     </span>
     <button
       type="button"
