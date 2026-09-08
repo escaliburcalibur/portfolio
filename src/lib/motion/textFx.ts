@@ -5,12 +5,14 @@ gsap.registerPlugin(SplitText);
 
 /**
  * Per-line hover effect: on mouseenter, a pulse ripples out from the centre of
- * the line (delay ∝ distance from centre) with yoyo. Some characters swap to a
- * random glyph, some sprout a technical `△x = NNpx` annotation and a 1px
- * outline, then everything snaps back. Original implementation; monochrome — the
- * pulse is a black/white inversion driven by the `--fx-flash` custom property,
- * not a colour flash, to keep the palette hue-free.
+ * the line (delay ∝ distance from centre) with yoyo. Each character briefly
+ * flashes a colour from the accent set; some swap to a random glyph, some
+ * sprout a technical `△x = NNpx` annotation and a 1px coloured outline, then
+ * everything snaps back. This is the one place the otherwise-monochrome site
+ * uses colour, on purpose.
  */
+
+const FLASH_COLORS = ['#85AF00', '#FFCC00', '#FB9CFD', '#A19BFF', '#FF4C00'];
 
 const GLYPHS =
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<>%&@!#$^*()-_+={}[]|\\:;"?/~`'.split(
@@ -18,6 +20,7 @@ const GLYPHS =
   );
 
 const rand = (n: number) => (Math.random() * n) | 0;
+const pick = <T>(arr: T[]): T => arr[rand(arr.length)];
 
 interface Instance {
   split: SplitText;
@@ -51,6 +54,7 @@ function wire(el: HTMLElement) {
     const reset = (char: HTMLElement) => {
       char.textContent = char.dataset.orig ?? '';
       char.style.outline = '';
+      char.style.color = '';
     };
 
     const onEnter = () => {
@@ -58,37 +62,33 @@ function wire(el: HTMLElement) {
         gsap.killTweensOf(char);
         reset(char);
 
-        gsap.fromTo(
-          char,
-          { '--fx-flash': 0 },
-          {
-            '--fx-flash': 1,
-            duration: 0.3,
-            ease: 'power3.out',
-            delay: Math.abs(i - mid) * 0.03,
-            repeat: 1,
-            yoyo: true,
-            overwrite: 'auto',
-            onStart: () => {
-              if (Math.random() < 0.4) {
-                char.textContent = GLYPHS[rand(GLYPHS.length)];
-              }
-              if (Math.random() < 0.26) {
-                const detail = document.createElement('span');
-                detail.className = 'fx-detail';
-                detail.textContent = `△x = ${Math.round(
-                  char.getBoundingClientRect().width,
-                )}px`;
-                char.appendChild(detail);
-              }
-              if (Math.random() < 0.26) {
-                char.style.outline = '1px solid var(--color-content)';
-              }
-            },
-            onComplete: () => reset(char),
-            onInterrupt: () => reset(char),
+        gsap.to(char, {
+          color: pick(FLASH_COLORS),
+          duration: 0.3,
+          ease: 'power3.out',
+          delay: Math.abs(i - mid) * 0.03,
+          repeat: 1,
+          yoyo: true,
+          overwrite: 'auto',
+          onStart: () => {
+            if (Math.random() < 0.4) {
+              char.textContent = GLYPHS[rand(GLYPHS.length)];
+            }
+            if (Math.random() < 0.26) {
+              const detail = document.createElement('span');
+              detail.className = 'fx-detail';
+              detail.textContent = `△x = ${Math.round(
+                char.getBoundingClientRect().width,
+              )}px`;
+              char.appendChild(detail);
+            }
+            if (Math.random() < 0.26) {
+              char.style.outline = `1px solid ${pick(FLASH_COLORS)}`;
+            }
           },
-        );
+          onComplete: () => reset(char),
+          onInterrupt: () => reset(char),
+        });
       });
     };
 

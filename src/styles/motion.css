@@ -1,31 +1,15 @@
 /* ── Motion: text hover effect + smooth scroll ──────────────
    Behaviour lives in src/lib/motion/**. This file is only the paint. */
 
-@property --fx-flash {
-  syntax: '<number>';
-  inherits: false;
-  initial-value: 0;
-}
-
 [data-text-fx] {
   cursor: crosshair;
 }
 
-/* Split character. The pulse is a black/white inversion (monochrome) —
-   `--fx-flash` runs 0 → 1 → 0, tweened by GSAP with a centre-out delay. */
+/* Split character. Colour is animated inline by GSAP on hover; this just
+   makes the box able to host the outline and the annotation. */
 .fx-char {
   position: relative;
   display: inline-block;
-  color: color-mix(
-    in srgb,
-    var(--color-content),
-    var(--color-surface) calc(var(--fx-flash) * 92%)
-  );
-  background-color: color-mix(
-    in srgb,
-    transparent,
-    var(--color-content) calc(var(--fx-flash) * 100%)
-  );
 }
 
 /* Technical annotation that some characters sprout mid-pulse. */
