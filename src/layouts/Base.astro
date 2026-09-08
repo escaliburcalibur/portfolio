@@ -24,6 +24,11 @@ const seo = Astro.props;
         } catch {
           /* private mode / blocked storage — fall back to the media query */
         }
+        // Arm the load-in reveal (hides its targets); the motion module or this
+        // failsafe removes it so text never stays hidden.
+        const d = document.documentElement;
+        d.classList.add('reveal-armed');
+        setTimeout(() => d.classList.remove('reveal-armed'), 4000);
       })();
     </script>
   </head>

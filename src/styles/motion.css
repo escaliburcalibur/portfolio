@@ -12,6 +12,36 @@
   display: inline-block;
 }
 
+/* ── Load-in reveal ───────────────────────────────────────── */
+
+/* Keep reveal targets hidden until their timeline takes over. The class is
+   added synchronously in <head> and removed by initTextReveal (or a failsafe),
+   so a JS failure never leaves text invisible for long. */
+@media (prefers-reduced-motion: no-preference) {
+  html.reveal-armed [data-text-reveal] {
+    visibility: hidden;
+  }
+}
+
+.fx-line {
+  position: relative;
+}
+
+/* The cursor block that rides the leading edge of the sweep. */
+.reveal-block {
+  position: absolute;
+  inset-block-start: 0.1em;
+  inset-inline-start: 0;
+  inline-size: 1.4ch;
+  block-size: 0.82em;
+  transform-origin: left center;
+  background: var(--color-content);
+  mix-blend-mode: difference;
+  pointer-events: none;
+  visibility: hidden;
+  will-change: transform;
+}
+
 /* Technical annotation that some characters sprout mid-pulse. */
 .fx-detail {
   position: absolute;

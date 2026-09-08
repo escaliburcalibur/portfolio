@@ -1,55 +1,32 @@
 import { gsap } from 'gsap';
-import { SplitText } from 'gsap/SplitText';
-
-gsap.registerPlugin(SplitText);
+import { getSplit, revertSplit } from './textSplit';
+import { FLASH_COLORS, rand, pick } from './palette';
 
 /**
  * Per-line hover effect: on mouseenter, a pulse ripples out from the centre of
  * the line (delay ∝ distance from centre) with yoyo. Each character briefly
  * flashes a colour from the accent set; some swap to a random glyph, some
  * sprout a technical `△x = NNpx` annotation and a 1px coloured outline, then
- * everything snaps back. This is the one place the otherwise-monochrome site
- * uses colour, on purpose.
+ * everything snaps back. This is one of two places the otherwise-monochrome
+ * site uses colour, on purpose.
  */
-
-const FLASH_COLORS = ['#85AF00', '#FFCC00', '#FB9CFD', '#A19BFF', '#FF4C00'];
 
 const GLYPHS =
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<>%&@!#$^*()-_+={}[]|\\:;"?/~`'.split(
     '',
   );
 
-const rand = (n: number) => (Math.random() * n) | 0;
-const pick = <T>(arr: T[]): T => arr[rand(arr.length)];
-
-interface Instance {
-  split: SplitText;
-  cleanup: () => void;
-}
-
-const instances = new WeakMap<HTMLElement, Instance>();
+const wired = new WeakSet<HTMLElement>();
 
 function wire(el: HTMLElement) {
-  if (instances.has(el)) return;
+  if (wired.has(el)) return;
+  wired.add(el);
 
-  const split = new SplitText(el, {
-    type: 'lines,chars',
-    linesClass: 'fx-line',
-    charsClass: 'fx-char',
-    aria: 'auto',
-  });
+  const { lines, chars } = getSplit(el);
 
-  for (const char of split.chars as HTMLElement[]) {
-    char.dataset.orig = char.textContent ?? '';
-  }
-
-  const teardowns: (() => void)[] = [];
-
-  for (const line of split.lines as HTMLElement[]) {
-    const chars = (split.chars as HTMLElement[]).filter((c) =>
-      line.contains(c),
-    );
-    const mid = (chars.length - 1) / 2;
+  for (const line of lines) {
+    const lineChars = chars.filter((c) => line.contains(c));
+    const mid = (lineChars.length - 1) / 2;
 
     const reset = (char: HTMLElement) => {
       char.textContent = char.dataset.orig ?? '';
@@ -57,8 +34,8 @@ function wire(el: HTMLElement) {
       char.style.color = '';
     };
 
-    const onEnter = () => {
-      chars.forEach((char, i) => {
+    line.addEventListener('mouseenter', () => {
+      lineChars.forEach((char, i) => {
         gsap.killTweensOf(char);
         reset(char);
 
@@ -90,20 +67,8 @@ function wire(el: HTMLElement) {
           onInterrupt: () => reset(char),
         });
       });
-    };
-
-    line.addEventListener('mouseenter', onEnter);
-    teardowns.push(() => line.removeEventListener('mouseenter', onEnter));
+    });
   }
-
-  instances.set(el, {
-    split,
-    cleanup: () => {
-      teardowns.forEach((t) => t());
-      split.revert();
-      instances.delete(el);
-    },
-  });
 }
 
 export function initTextFx(root: ParentNode = document) {
@@ -113,8 +78,8 @@ export function initTextFx(root: ParentNode = document) {
     .forEach((el) => wire(el));
 }
 
-/** Re-split on viewport width changes (line breaks move). Debounced. */
-export function watchTextFxResize() {
+/** Re-split every effect target on width changes (line breaks move). Debounced. */
+export function watchTextResize(onResplit?: () => void) {
   let w = window.innerWidth;
   let t: number | undefined;
   window.addEventListener('resize', () => {
@@ -122,10 +87,14 @@ export function watchTextFxResize() {
     w = window.innerWidth;
     window.clearTimeout(t);
     t = window.setTimeout(() => {
-      document.querySelectorAll<HTMLElement>('[data-text-fx]').forEach((el) => {
-        instances.get(el)?.cleanup();
-        wire(el);
-      });
+      document
+        .querySelectorAll<HTMLElement>('[data-text-fx], [data-text-reveal]')
+        .forEach((el) => {
+          wired.delete(el);
+          revertSplit(el);
+        });
+      onResplit?.();
+      initTextFx();
     }, 200);
   });
 }

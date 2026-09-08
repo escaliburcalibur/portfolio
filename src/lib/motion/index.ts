@@ -1,14 +1,17 @@
 import { initSmoothScroll } from './smoothScroll';
-import { initTextFx, watchTextFxResize } from './textFx';
+import { initTextReveal } from './textReveal';
+import { initTextFx, watchTextResize } from './textFx';
 
 /**
- * Motion entry point — imported once from Base.astro. Everything inside is a
- * no-op under prefers-reduced-motion (each module guards itself).
+ * Motion entry point — imported once from Base.astro. Every module guards
+ * itself on prefers-reduced-motion. Reveal runs first (load-in), then the hover
+ * effect wires onto the same shared split.
  */
-function start() {
+async function start() {
   initSmoothScroll();
+  await initTextReveal();
   initTextFx();
-  watchTextFxResize();
+  watchTextResize();
 }
 
 // Split after fonts settle so line breaks and glyph widths are final.
