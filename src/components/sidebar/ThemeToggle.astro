@@ -1,0 +1,106 @@
+---
+/**
+ * Dark / light toggle. Persists to localStorage; the no-flash script in
+ * Base.astro applies the stored value before paint. Monochrome — the two
+ * states are literally "dark side" and "white side".
+ */
+---
+
+<button
+  type="button"
+  class="theme-toggle"
+  data-theme-toggle
+  aria-label="Toggle colour theme"
+  aria-pressed="false"
+>
+  <span class="theme-toggle__track" aria-hidden="true">
+    <span class="theme-toggle__knob"></span>
+  </span>
+  <span class="theme-toggle__label" data-theme-label>Dark</span>
+</button>
+
+<style>
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2xs);
+    padding: 0;
+    background: none;
+    border: none;
+    color: var(--color-content-muted);
+    font: inherit;
+    font-size: var(--text-meta);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .theme-toggle__track {
+    position: relative;
+    inline-size: 2.25rem;
+    block-size: 1.25rem;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-elevated);
+    transition: background var(--dur-fast) var(--ease-out);
+  }
+
+  .theme-toggle__knob {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 0.1875rem;
+    inline-size: 0.75rem;
+    block-size: 0.75rem;
+    border-radius: 50%;
+    background: var(--color-content);
+    transform: translateY(-50%);
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+
+  .theme-toggle[aria-pressed='true'] .theme-toggle__knob {
+    transform: translate(1rem, -50%);
+  }
+
+  .theme-toggle:hover {
+    color: var(--color-content);
+  }
+</style>
+
+<script>
+  type Theme = 'dark' | 'light';
+
+  const prefersLight =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-color-scheme: light)').matches;
+
+  function current(): Theme {
+    const set = document.documentElement.dataset.theme;
+    if (set === 'dark' || set === 'light') return set;
+    return prefersLight ? 'light' : 'dark';
+  }
+
+  function apply(theme: Theme) {
+    document.documentElement.dataset.theme = theme;
+    try {
+      localStorage.setItem('theme', theme);
+    } catch {
+      /* storage blocked — session-only is fine */
+    }
+    for (const btn of document.querySelectorAll<HTMLButtonElement>(
+      '[data-theme-toggle]',
+    )) {
+      btn.setAttribute('aria-pressed', String(theme === 'light'));
+      const label = btn.querySelector('[data-theme-label]');
+      if (label) label.textContent = theme === 'light' ? 'Light' : 'Dark';
+    }
+  }
+
+  // Sync controls with whatever the pre-paint script decided.
+  apply(current());
+
+  for (const btn of document.querySelectorAll('[data-theme-toggle]')) {
+    btn.addEventListener('click', () => {
+      apply(current() === 'light' ? 'dark' : 'light');
+    });
+  }
+</script>

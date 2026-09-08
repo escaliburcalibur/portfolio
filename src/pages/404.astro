@@ -1,5 +1,5 @@
 ---
-import Base from '@layouts/Base.astro';
+import Shell from '@layouts/Shell.astro';
 
 const seo = {
   title: 'Page not found',
@@ -9,13 +9,13 @@ const seo = {
 };
 ---
 
-<Base {...seo}>
+<Shell {...seo}>
   <main id="main" class="notfound">
     <p class="notfound__code">404</p>
     <h1 class="notfound__title">This page does not exist</h1>
     <a class="notfound__home" href="/">Back to home</a>
   </main>
-</Base>
+</Shell>
 
 <style>
   .notfound {
@@ -27,17 +27,17 @@ const seo = {
   }
 
   .notfound__code {
-    font-size: var(--text-xs);
-    letter-spacing: 0.08em;
+    font-size: var(--text-meta);
+    letter-spacing: var(--tracking-label);
     color: var(--color-content-faint);
   }
 
   .notfound__title {
-    font-size: var(--text-lg);
+    font-size: var(--text-display);
   }
 
   .notfound__home {
-    font-size: var(--text-sm);
+    font-size: var(--text-small);
     color: var(--color-content-muted);
     width: max-content;
     border-bottom: 1px solid var(--color-line);

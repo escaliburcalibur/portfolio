@@ -1,0 +1,208 @@
+---
+import Wordmark from '@components/sidebar/Wordmark.astro';
+import ThemeToggle from '@components/sidebar/ThemeToggle.astro';
+import ProjectRail from '@components/sidebar/ProjectRail.astro';
+import Placeholder from '@components/Placeholder.astro';
+import { site } from '@lib/site';
+
+/**
+ * Persistent left rail (desktop) / sticky top bar + overlay menu (≤656px).
+ * The rail IS the navigation — no separate top nav. Clock is deferred.
+ */
+---
+
+<header class="sidebar" data-sidebar>
+  <div class="sidebar__bar">
+    <Wordmark />
+    <div class="sidebar__bar-actions">
+      <ThemeToggle />
+      <button
+        type="button"
+        class="sidebar__menu-btn"
+        data-menu-toggle
+        aria-expanded="false"
+        aria-controls="sidebar-scroll"
+      >
+        Menu
+      </button>
+    </div>
+  </div>
+
+  <div class="sidebar__scroll" id="sidebar-scroll" data-sidebar-scroll>
+    <a class="sidebar__about" href={site.aboutHref}>
+      <span class="sidebar__about-thumb">
+        <Placeholder label="" ratio="1 / 1" class="sidebar__about-ph" />
+      </span>
+      <span class="sidebar__about-label">{site.aboutLabel}</span>
+    </a>
+
+    <ProjectRail />
+  </div>
+</header>
+
+<style>
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    background: var(--color-surface);
+  }
+
+  .sidebar__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+  }
+
+  .sidebar__bar-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+
+  .sidebar__menu-btn {
+    display: none;
+    padding: 0;
+    background: none;
+    border: none;
+    color: var(--color-content-muted);
+    font: inherit;
+    font-size: var(--text-meta);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .sidebar__menu-btn:hover {
+    color: var(--color-content);
+  }
+
+  .sidebar__scroll {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .sidebar__about {
+    display: grid;
+    grid-template-columns: 3.25rem 1fr;
+    align-items: center;
+    gap: var(--spacing-2xs);
+    padding: var(--spacing-3xs);
+    border-radius: var(--radius-card-sm);
+    color: var(--color-content-muted);
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+
+  .sidebar__about-thumb {
+    inline-size: 3.25rem;
+  }
+
+  .sidebar__about :global(.sidebar__about-ph) {
+    border-radius: var(--radius-card-sm);
+  }
+
+  .sidebar__about-label {
+    font-size: var(--text-small);
+    color: var(--color-content);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .sidebar__about:hover {
+      background: var(--color-surface-elevated);
+      color: var(--color-content);
+    }
+  }
+
+  /* ── Desktop: persistent column ──────────────────────────── */
+  @media (min-width: 41rem) {
+    .sidebar {
+      position: sticky;
+      inset-block-start: 0;
+      block-size: 100svh;
+      inline-size: var(--layout-rail);
+      overflow-y: auto;
+      border-inline-end: 1px solid var(--color-line);
+    }
+
+    .sidebar[data-scrolled='true'] {
+      backdrop-filter: blur(24px);
+    }
+  }
+
+  /* ── Mobile: sticky top bar + overlay menu ───────────────── */
+  @media (max-width: 40.999rem) {
+    .sidebar {
+      position: sticky;
+      inset-block-start: 0;
+      z-index: 20;
+      gap: 0;
+      padding: var(--spacing-xs) var(--spacing-sm);
+      border-block-end: 1px solid var(--color-line);
+    }
+
+    .sidebar__menu-btn {
+      display: inline-block;
+    }
+
+    .sidebar__scroll {
+      position: fixed;
+      inset: 0;
+      inset-block-start: 3.25rem;
+      z-index: 19;
+      padding: var(--spacing-sm);
+      background: var(--color-surface);
+      overflow-y: auto;
+      transform: translateY(-100%);
+      visibility: hidden;
+      transition:
+        transform var(--dur-base) var(--ease-out),
+        visibility var(--dur-base);
+    }
+
+    .sidebar[data-menu-open='true'] .sidebar__scroll {
+      transform: translateY(0);
+      visibility: visible;
+    }
+  }
+</style>
+
+<script>
+  const sidebar = document.querySelector<HTMLElement>('[data-sidebar]');
+  const scroller = document.querySelector<HTMLElement>('[data-sidebar-scroll]');
+  const menuBtn =
+    document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+
+  // Mobile overlay menu
+  function setMenu(open: boolean) {
+    if (!sidebar || !menuBtn) return;
+    sidebar.dataset.menuOpen = String(open);
+    menuBtn.setAttribute('aria-expanded', String(open));
+    menuBtn.textContent = open ? 'Close' : 'Menu';
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+
+  menuBtn?.addEventListener('click', () => {
+    setMenu(sidebar?.dataset.menuOpen !== 'true');
+  });
+
+  scroller?.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('a')) setMenu(false);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && sidebar?.dataset.menuOpen === 'true')
+      setMenu(false);
+  });
+
+  // Frosted-glass state once content scrolls under the rail (desktop)
+  const onScroll = () => {
+    if (sidebar) sidebar.dataset.scrolled = String(window.scrollY > 8);
+  };
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+</script>

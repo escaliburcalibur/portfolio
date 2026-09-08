@@ -1,0 +1,46 @@
+---
+import Base from '@layouts/Base.astro';
+import Sidebar from '@components/sidebar/Sidebar.astro';
+import type { PageSeo } from '@lib/seo';
+
+/**
+ * The two-panel shell used by every route: persistent left rail + right
+ * content pane. Faithful to the reference architecture — original code.
+ */
+type Props = PageSeo;
+const seo = Astro.props;
+---
+
+<Base {...seo}>
+  <div class="shell">
+    <Sidebar />
+    <div class="shell__content">
+      <slot />
+    </div>
+  </div>
+</Base>
+
+<style>
+  .shell {
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+  }
+
+  .shell__content {
+    flex: 1;
+    min-width: 0;
+    padding: var(--spacing-sm);
+  }
+
+  @media (min-width: 41rem) {
+    .shell {
+      flex-direction: row;
+      align-items: flex-start;
+    }
+
+    .shell__content {
+      padding: var(--spacing-lg);
+    }
+  }
+</style>

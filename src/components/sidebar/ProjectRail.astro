@@ -1,0 +1,47 @@
+---
+import RailCard from '@components/sidebar/RailCard.astro';
+import { projects } from '@lib/projects';
+
+/**
+ * The project list that doubles as the primary navigation. Ordered by the
+ * `projects` array for now; Phase 5 reorders it per visitor discipline profile.
+ */
+---
+
+<nav class="rail" aria-label="Projects">
+  <p class="rail__heading" id="rail-heading">Projects</p>
+  <ul class="rail__list" aria-labelledby="rail-heading">
+    {
+      projects.map((project, i) => (
+        <li>
+          <RailCard project={project} index={i} />
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style>
+  .rail {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2xs);
+  }
+
+  .rail__heading {
+    font-size: var(--text-meta);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-content-faint);
+    padding-inline: var(--spacing-3xs);
+  }
+
+  .rail__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+</style>

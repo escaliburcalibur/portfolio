@@ -1,0 +1,186 @@
+---
+import Placeholder from '@components/Placeholder.astro';
+import { projects } from '@lib/projects';
+
+/**
+ * Single image panel with a fixed aspect ratio (not full-viewport). One layer
+ * per project; hovering a rail card swaps the visible layer. "Gallery mode"
+ * auto-cycles. Reduced-motion disables the auto-cycle and the crossfade.
+ */
+const layers = projects;
+---
+
+<section class="hero" data-hero aria-label="Featured work">
+  <div class="hero__frame">
+    {
+      layers.map((project, i) => (
+        <div
+          class="hero__layer"
+          data-hero-layer
+          data-slug={project.slug}
+          data-selected={i === 0 ? 'true' : 'false'}
+        >
+          <Placeholder label={project.title} ratio="1496 / 998" index={i + 1} />
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="hero__meta">
+    <span class="hero__caption" data-hero-caption>
+      {layers[0]?.title} — {layers[0]?.railDescription}
+    </span>
+    <button
+      type="button"
+      class="hero__gallery-btn"
+      data-gallery-toggle
+      aria-pressed="false"
+    >
+      Gallery mode
+    </button>
+  </div>
+</section>
+
+<style>
+  .hero {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2xs);
+  }
+
+  .hero__frame {
+    position: relative;
+    aspect-ratio: 1496 / 998;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+
+  .hero__layer {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity var(--dur-base) var(--ease-out),
+      visibility var(--dur-base);
+  }
+
+  .hero__layer :global(.ph) {
+    block-size: 100%;
+    border-radius: var(--radius-card);
+  }
+
+  .hero__layer[data-selected='true'] {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .hero__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+  }
+
+  .hero__caption {
+    font-size: var(--text-meta);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-content-faint);
+  }
+
+  .hero__gallery-btn {
+    padding: 0;
+    background: none;
+    border: none;
+    color: var(--color-content-muted);
+    font: inherit;
+    font-size: var(--text-meta);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .hero__gallery-btn:hover,
+  .hero__gallery-btn[aria-pressed='true'] {
+    color: var(--color-content);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__layer {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+  if (hero) {
+    const layers = [...hero.querySelectorAll<HTMLElement>('[data-hero-layer]')];
+    const caption = hero.querySelector<HTMLElement>('[data-hero-caption]');
+    const galleryBtn = hero.querySelector<HTMLButtonElement>(
+      '[data-gallery-toggle]',
+    );
+    const bySlug = new Map(layers.map((l) => [l.dataset.slug, l]));
+    const defaultSlug = layers[0]?.dataset.slug ?? '';
+    const reduceMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches;
+
+    let galleryTimer: number | undefined;
+
+    function select(slug: string | undefined) {
+      if (!slug || !bySlug.has(slug)) return;
+      for (const layer of layers) {
+        layer.dataset.selected = String(layer.dataset.slug === slug);
+      }
+      const card = document.querySelector(
+        `[data-rail-card][data-slug="${slug}"] .rail-card__title`,
+      );
+      const desc = document.querySelector(
+        `[data-rail-card][data-slug="${slug}"] .rail-card__desc`,
+      );
+      if (caption && card) {
+        caption.textContent = desc
+          ? `${card.textContent} — ${desc.textContent}`
+          : card.textContent;
+      }
+    }
+
+    // Hover the rail → swap the hero (pointer devices only).
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      document.addEventListener('pointerover', (e) => {
+        const card = (e.target as HTMLElement).closest<HTMLElement>(
+          '[data-rail-card]',
+        );
+        if (card && !galleryTimer) select(card.dataset.slug);
+      });
+      const rail = document.querySelector('.rail__list');
+      rail?.addEventListener('pointerleave', () => {
+        if (!galleryTimer) select(defaultSlug);
+      });
+    }
+
+    function stopGallery() {
+      if (galleryTimer) window.clearInterval(galleryTimer);
+      galleryTimer = undefined;
+      galleryBtn?.setAttribute('aria-pressed', 'false');
+      select(defaultSlug);
+    }
+
+    function startGallery() {
+      if (reduceMotion) return;
+      let i = 0;
+      galleryBtn?.setAttribute('aria-pressed', 'true');
+      galleryTimer = window.setInterval(() => {
+        i = (i + 1) % layers.length;
+        select(layers[i]?.dataset.slug);
+      }, 2400);
+    }
+
+    galleryBtn?.addEventListener('click', () => {
+      if (galleryTimer) stopGallery();
+      else startGallery();
+    });
+  }
+</script>

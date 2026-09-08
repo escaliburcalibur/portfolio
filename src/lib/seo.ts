@@ -19,7 +19,7 @@ export const SITE: SiteMeta = {
     /\/$/,
     '',
   ),
-  name: 'Studio', // TODO: brand name
+  name: 'David Bayón',
   defaultOgImage: '/og/default.png',
   locale: 'en',
   twitter: undefined,

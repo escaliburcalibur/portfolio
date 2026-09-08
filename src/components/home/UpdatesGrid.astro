@@ -1,0 +1,56 @@
+---
+import UpdateCard from '@components/home/UpdateCard.astro';
+import { journal } from '@lib/journal';
+
+/**
+ * "Studio updates" feed — masonry columns 3 → 2 (≤1280px) → 1 (≤1024px).
+ * Chronological blend of launches and news, newest first. No footer follows.
+ */
+---
+
+<section class="updates" aria-label="Studio updates">
+  <p class="updates__heading">Studio updates</p>
+  <div class="updates__grid">
+    {
+      journal.map((entry, i) => (
+        <UpdateCard entry={entry} withMedia={i % 2 === 1} />
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .updates {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .updates__heading {
+    font-size: var(--text-meta);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-content-faint);
+  }
+
+  .updates__grid {
+    column-count: 1;
+    column-gap: var(--spacing-lg);
+  }
+
+  .updates__grid > :global(*) {
+    margin-block-end: var(--spacing-lg);
+  }
+
+  @media (min-width: 64rem) {
+    .updates__grid {
+      column-count: 2;
+    }
+  }
+
+  @media (min-width: 80rem) {
+    .updates__grid {
+      column-count: 3;
+    }
+  }
+</style>

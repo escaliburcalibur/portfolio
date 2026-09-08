@@ -1,0 +1,60 @@
+---
+import Placeholder from '@components/Placeholder.astro';
+import type { JournalEntry } from '@lib/journal';
+
+interface Props {
+  entry: JournalEntry;
+  withMedia?: boolean;
+}
+const { entry, withMedia = false } = Astro.props;
+
+const date = new Date(entry.date).toLocaleDateString('en-GB', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+---
+
+<article class="update">
+  <p class="update__date">
+    <time datetime={entry.date}>{date}</time>
+  </p>
+  <h2 class="update__title">
+    <a href={`/journal/${entry.slug}`}>{entry.title}</a>
+  </h2>
+  <p class="update__excerpt">{entry.excerpt}</p>
+  {withMedia && <Placeholder label="" ratio="4 / 3" class="update__media" />}
+</article>
+
+<style>
+  .update {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2xs);
+    break-inside: avoid;
+  }
+
+  .update__date {
+    font-size: var(--text-meta);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-content-faint);
+  }
+
+  .update__title {
+    font-size: var(--text-display);
+  }
+
+  .update__title a:hover {
+    color: var(--color-content-muted);
+  }
+
+  .update__excerpt {
+    font-size: var(--text-small);
+    color: var(--color-content-muted);
+  }
+
+  .update :global(.update__media) {
+    margin-block-start: var(--spacing-2xs);
+  }
+</style>

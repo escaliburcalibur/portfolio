@@ -1,0 +1,93 @@
+---
+import Placeholder from '@components/Placeholder.astro';
+import type { ProjectSummary } from '@lib/projects';
+
+interface Props {
+  project: ProjectSummary;
+  index: number;
+}
+const { project, index } = Astro.props;
+---
+
+<a
+  class="rail-card"
+  href={`/${project.slug}`}
+  data-rail-card
+  data-slug={project.slug}
+>
+  <span class="rail-card__thumb">
+    <Placeholder label="" ratio="1 / 1" class="rail-card__ph" />
+  </span>
+  <span class="rail-card__text">
+    <span class="rail-card__title">{project.title}</span>
+    <span class="rail-card__desc">{project.railDescription}</span>
+  </span>
+  <span class="rail-card__index" aria-hidden="true"
+    >{String(index + 1).padStart(2, '0')}</span
+  >
+</a>
+
+<style>
+  .rail-card {
+    display: grid;
+    grid-template-columns: 3.25rem 1fr auto;
+    align-items: center;
+    gap: var(--spacing-2xs);
+    padding: var(--spacing-3xs) var(--spacing-3xs) var(--spacing-3xs)
+      var(--spacing-3xs);
+    border-radius: var(--radius-card-sm);
+    color: var(--color-content-muted);
+    transition:
+      background var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+
+  .rail-card__thumb {
+    display: block;
+    inline-size: 3.25rem;
+  }
+
+  .rail-card :global(.rail-card__ph) {
+    border-radius: var(--radius-card-sm);
+  }
+
+  .rail-card__text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+  }
+
+  .rail-card__title {
+    font-size: var(--text-small);
+    color: var(--color-content);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .rail-card__desc {
+    font-size: var(--text-meta);
+    color: var(--color-content-faint);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .rail-card__index {
+    font-size: var(--text-meta);
+    color: var(--color-content-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .rail-card:hover {
+      background: var(--color-surface-elevated);
+      color: var(--color-content);
+    }
+  }
+
+  .rail-card[aria-current='true'] {
+    background: var(--color-surface-elevated);
+  }
+</style>

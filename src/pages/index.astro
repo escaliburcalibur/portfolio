@@ -1,48 +1,28 @@
 ---
-import Base from '@layouts/Base.astro';
+import Shell from '@layouts/Shell.astro';
+import HeroSwap from '@components/home/HeroSwap.astro';
+import UpdatesGrid from '@components/home/UpdatesGrid.astro';
 import { SITE } from '@lib/seo';
 
 const seo = {
   title: SITE.name,
   description:
-    'Independent design studio — branding, brand strategy, motion, 3D, web design, UI/UX and creative development.',
+    'David Bayón — independent design studio. Branding, brand strategy, motion, 3D, web design, UI/UX and creative development.',
   path: '/',
 };
 ---
 
-<Base {...seo}>
-  <main id="main" class="scaffold">
-    <p class="scaffold__eyebrow">Phase 0 · scaffold</p>
-    <h1 class="scaffold__title">Studio</h1>
-    <p class="scaffold__body">
-      Build pipeline, tooling and design tokens are in place. Next: the
-      two-panel shell (Phase&nbsp;1).
-    </p>
+<Shell {...seo}>
+  <main id="main" class="home">
+    <HeroSwap />
+    <UpdatesGrid />
   </main>
-</Base>
+</Shell>
 
 <style>
-  .scaffold {
-    min-height: 100svh;
-    display: grid;
-    align-content: center;
-    gap: var(--spacing-xs);
-    padding: var(--spacing-xl);
-  }
-
-  .scaffold__eyebrow {
-    font-size: var(--text-xs);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--color-content-faint);
-  }
-
-  .scaffold__title {
-    font-size: var(--text-xl);
-  }
-
-  .scaffold__body {
-    font-size: var(--text-base);
-    color: var(--color-content-muted);
+  .home {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2xl);
   }
 </style>
