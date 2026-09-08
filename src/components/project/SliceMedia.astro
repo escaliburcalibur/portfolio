@@ -15,7 +15,7 @@ const {
 } = Astro.props;
 ---
 
-<figure class="slice-media" data-orientation={orientation}>
+<figure class="slice-media" data-orientation={orientation} data-speed="0.94">
   {
     src ? (
       <img src={src} alt={caption ?? ''} loading="lazy" decoding="async" />

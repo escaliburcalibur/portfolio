@@ -21,6 +21,10 @@
   html.reveal-armed [data-text-reveal] {
     visibility: hidden;
   }
+
+  html.reveal-armed [data-reveal] {
+    opacity: 0;
+  }
 }
 
 .fx-line {

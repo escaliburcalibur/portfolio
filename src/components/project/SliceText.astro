@@ -7,7 +7,7 @@ interface Props {
 const { heading, body, variant = 'default' } = Astro.props;
 ---
 
-<div class="slice-text" data-variant={variant}>
+<div class="slice-text" data-variant={variant} data-reveal>
   {
     heading && (
       <h2 class="slice-text__heading" data-text-fx>

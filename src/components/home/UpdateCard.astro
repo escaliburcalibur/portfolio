@@ -15,7 +15,7 @@ const date = entry.data.date.toLocaleDateString('en-GB', {
 });
 ---
 
-<article class="update">
+<article class="update" data-reveal>
   <p class="update__date"><time datetime={iso}>{date}</time></p>
   <h2 class="update__title">
     <a href={`/journal/${entry.id}`} data-text-fx>{entry.data.title}</a>

@@ -1,6 +1,7 @@
 import { initSmoothScroll } from './smoothScroll';
 import { initTextReveal } from './textReveal';
 import { initTextFx, watchTextResize } from './textFx';
+import { initScrollEffects } from './scrollEffects';
 
 /**
  * Motion entry point — imported once from Base.astro. Every module guards
@@ -9,6 +10,7 @@ import { initTextFx, watchTextResize } from './textFx';
  */
 async function start() {
   initSmoothScroll();
+  initScrollEffects();
   await initTextReveal();
   initTextFx();
   watchTextResize();
