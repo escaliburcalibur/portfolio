@@ -12,7 +12,7 @@ const attrs = asText
   : { href: '/', 'aria-label': `${site.wordmark} — home` };
 ---
 
-<Tag class="wordmark" {...attrs}>{site.wordmark}</Tag>
+<Tag class="wordmark" data-text-fx {...attrs}>{site.wordmark}</Tag>
 
 <style>
   .wordmark {

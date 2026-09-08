@@ -1,0 +1,70 @@
+/* ── Motion: text hover effect + smooth scroll ──────────────
+   Behaviour lives in src/lib/motion/**. This file is only the paint. */
+
+@property --fx-flash {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+[data-text-fx] {
+  cursor: crosshair;
+}
+
+/* Split character. The pulse is a black/white inversion (monochrome) —
+   `--fx-flash` runs 0 → 1 → 0, tweened by GSAP with a centre-out delay. */
+.fx-char {
+  position: relative;
+  display: inline-block;
+  color: color-mix(
+    in srgb,
+    var(--color-content),
+    var(--color-surface) calc(var(--fx-flash) * 92%)
+  );
+  background-color: color-mix(
+    in srgb,
+    transparent,
+    var(--color-content) calc(var(--fx-flash) * 100%)
+  );
+}
+
+/* Technical annotation that some characters sprout mid-pulse. */
+.fx-detail {
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-end: -0.85em;
+  inline-size: 100%;
+  min-inline-size: 50px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: var(--weight-regular);
+  letter-spacing: 0;
+  line-height: 1;
+  color: var(--color-content-faint);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-text-fx] {
+    cursor: auto;
+  }
+}
+
+/* ── Lenis ────────────────────────────────────────────────── */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}

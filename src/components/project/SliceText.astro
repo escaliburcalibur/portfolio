@@ -8,7 +8,13 @@ const { heading, body, variant = 'default' } = Astro.props;
 ---
 
 <div class="slice-text" data-variant={variant}>
-  {heading && <h2 class="slice-text__heading">{heading}</h2>}
+  {
+    heading && (
+      <h2 class="slice-text__heading" data-text-fx>
+        {heading}
+      </h2>
+    )
+  }
   <p class="slice-text__body">{body}</p>
 </div>
 

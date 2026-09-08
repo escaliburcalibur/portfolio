@@ -31,7 +31,7 @@ const seo = {
 <Shell {...seo}>
   <main id="main" class="post">
     <p class="post__date"><time datetime={iso}>{date}</time></p>
-    <h1 class="post__title">{entry.data.title}</h1>
+    <h1 class="post__title" data-text-fx>{entry.data.title}</h1>
     <div class="post__body"><Content /></div>
     {
       entry.data.project && (
