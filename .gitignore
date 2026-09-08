@@ -26,6 +26,7 @@ vendor/
 
 # ─── Build output ────────────────────────────────────────
 dist/
+.astro/
 build/
 out/
 .next/

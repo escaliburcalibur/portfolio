@@ -1,0 +1,50 @@
+---
+import Base from '@layouts/Base.astro';
+
+const seo = {
+  title: 'Page not found',
+  description: 'That page does not exist.',
+  path: '/404',
+  noindex: true,
+};
+---
+
+<Base {...seo}>
+  <main id="main" class="notfound">
+    <p class="notfound__code">404</p>
+    <h1 class="notfound__title">This page does not exist</h1>
+    <a class="notfound__home" href="/">Back to home</a>
+  </main>
+</Base>
+
+<style>
+  .notfound {
+    min-height: 100svh;
+    display: grid;
+    align-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xl);
+  }
+
+  .notfound__code {
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    color: var(--color-content-faint);
+  }
+
+  .notfound__title {
+    font-size: var(--text-lg);
+  }
+
+  .notfound__home {
+    font-size: var(--text-sm);
+    color: var(--color-content-muted);
+    width: max-content;
+    border-bottom: 1px solid var(--color-line);
+    padding-bottom: 2px;
+  }
+
+  .notfound__home:hover {
+    color: var(--color-content);
+  }
+</style>

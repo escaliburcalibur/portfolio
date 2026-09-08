@@ -1,0 +1,33 @@
+{
+  "extends": ["stylelint-config-standard"],
+  "rules": {
+    "at-rule-no-unknown": [
+      true,
+      {
+        "ignoreAtRules": [
+          "theme",
+          "apply",
+          "variants",
+          "responsive",
+          "screen",
+          "layer",
+          "utility",
+          "custom-variant",
+          "reference",
+          "config",
+          "plugin",
+          "source"
+        ]
+      }
+    ],
+    "import-notation": null,
+    "custom-property-pattern": null,
+    "selector-class-pattern": null,
+    "no-descending-specificity": null,
+    "media-feature-range-notation": null,
+    "value-keyword-case": null,
+    "color-hex-length": null,
+    "comment-empty-line-before": null
+  },
+  "ignoreFiles": ["dist/**", ".astro/**", "node_modules/**"]
+}

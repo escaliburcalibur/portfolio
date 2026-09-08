@@ -1,0 +1,34 @@
+---
+import Meta from '@layouts/Meta.astro';
+import type { PageSeo } from '@lib/seo';
+import { SITE } from '@lib/seo';
+import '@styles/global.css';
+
+type Props = PageSeo;
+
+const seo = Astro.props;
+---
+
+<!doctype html>
+<html lang={SITE.locale}>
+  <head>
+    <Meta {...seo} />
+    <!-- Set the theme before paint to avoid a flash. -->
+    <script is:inline>
+      (() => {
+        try {
+          const stored = localStorage.getItem('theme');
+          if (stored === 'light' || stored === 'dark') {
+            document.documentElement.dataset.theme = stored;
+          }
+        } catch {
+          /* private mode / blocked storage — fall back to the media query */
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <slot />
+  </body>
+</html>

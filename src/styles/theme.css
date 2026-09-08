@@ -1,0 +1,97 @@
+/* ─────────────────────────────────────────────────────────────
+   Design tokens — dark-first, one accent, rounded "card" system.
+   Fluid type & spacing via clamp(). Semantic names, no magic hex
+   sprinkled through components (change here, not there).
+   ───────────────────────────────────────────────────────────── */
+@theme {
+  /* Colours — dark theme is the default (see :root below for light) */
+  --color-surface: #000000;
+  --color-surface-elevated: #0c0d0c;
+  --color-surface-sunken: #060606;
+  --color-content: #e2e6e3;
+  --color-content-muted: #9aa09c;
+  --color-content-faint: #6b706c;
+  --color-line: #1e201e;
+  --color-accent: #007aff; /* placeholder — finalised with brand identity */
+  --color-accent-content: #ffffff;
+  --color-focus-ring: #4c9dff;
+
+  /* Radii */
+  --radius-card: 16px;
+  --radius-card-sm: 8px;
+  --radius-pill: 999px;
+
+  /* Spacing scale (fluid) */
+  --spacing-3xs: clamp(0.25rem, 0.23rem + 0.1vw, 0.3rem);
+  --spacing-2xs: clamp(0.5rem, 0.46rem + 0.2vw, 0.625rem);
+  --spacing-xs: clamp(0.75rem, 0.69rem + 0.3vw, 0.9375rem);
+  --spacing-sm: clamp(1rem, 0.92rem + 0.4vw, 1.25rem);
+  --spacing-md: clamp(1.5rem, 1.38rem + 0.6vw, 1.875rem);
+  --spacing-lg: clamp(2.25rem, 2rem + 1.25vw, 3rem);
+  --spacing-xl: clamp(3.5rem, 3rem + 2.5vw, 5rem);
+  --spacing-2xl: clamp(5rem, 4rem + 5vw, 8rem);
+
+  /* Type scale (fluid) — Porto-Rocha-style restraint: nothing huge */
+  --text-xs: clamp(0.6875rem, 0.66rem + 0.14vw, 0.75rem);
+  --text-sm: clamp(0.8125rem, 0.79rem + 0.11vw, 0.875rem);
+  --text-base: clamp(0.875rem, 0.85rem + 0.12vw, 0.9375rem);
+  --text-md: clamp(1.0625rem, 1rem + 0.31vw, 1.25rem);
+  --text-lg: clamp(1.375rem, 1.28rem + 0.47vw, 1.75rem);
+  --text-xl: clamp(1.75rem, 1.55rem + 1vw, 2.5rem);
+
+  /* Fonts — system stacks now; bespoke faces swapped in with identity */
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+  --font-display:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+  --font-mono:
+    ui-monospace, 'SF Mono', 'JetBrains Mono', 'Fira Code', Menlo, monospace;
+
+  /* Layout */
+  --layout-rail: 22.5rem; /* left sidebar width on desktop */
+  --layout-gutter: clamp(0.75rem, 0.5rem + 1.2vw, 1.5rem);
+  --layout-max: 90rem;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 180ms;
+  --dur-base: 320ms;
+  --dur-slow: 520ms;
+
+  /* Breakpoints (documented; Tailwind v4 reads these for its screens) */
+  --breakpoint-sm: 41rem; /* 656px — sidebar → top bar */
+  --breakpoint-md: 48rem; /* 768px */
+  --breakpoint-lg: 57rem; /* 912px */
+  --breakpoint-xl: 64rem; /* 1024px */
+  --breakpoint-2xl: 80rem; /* 1280px */
+}
+
+/* Light theme — invert surface/content roles, keep the accent. */
+:root[data-theme='light'] {
+  --color-surface: #ffffff;
+  --color-surface-elevated: #f6f7f6;
+  --color-surface-sunken: #eceeec;
+  --color-content: #0a0b0a;
+  --color-content-muted: #565b57;
+  --color-content-faint: #8b908c;
+  --color-line: #e2e4e2;
+  --color-accent-content: #ffffff;
+  --color-focus-ring: #0060df;
+}
+
+/* Respect the OS preference until the user picks explicitly. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    --color-surface: #ffffff;
+    --color-surface-elevated: #f6f7f6;
+    --color-surface-sunken: #eceeec;
+    --color-content: #0a0b0a;
+    --color-content-muted: #565b57;
+    --color-content-faint: #8b908c;
+    --color-line: #e2e4e2;
+    --color-accent-content: #ffffff;
+    --color-focus-ring: #0060df;
+  }
+}
