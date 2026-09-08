@@ -69,14 +69,17 @@ function buildLine(
   tl.call(() => block.remove(), undefined, at + span + 0.13);
 }
 
-export function initTextReveal(): Promise<void> {
+export function initTextReveal(animate = true): Promise<void> {
   const targets = [
     ...document.querySelectorAll<HTMLElement>('[data-text-reveal]'),
   ];
   const disarm = () =>
     document.documentElement.classList.remove('reveal-armed');
 
+  // No block-wipe on client-side navigation (Porto Rocha just crossfades) or
+  // under reduced motion — just show the text.
   if (
+    !animate ||
     !targets.length ||
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
   ) {

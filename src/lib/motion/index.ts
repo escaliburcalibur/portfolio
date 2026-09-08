@@ -1,24 +1,52 @@
-import { initSmoothScroll } from './smoothScroll';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { initSmoothScroll, refreshSmoothScroll } from './smoothScroll';
 import { initTextReveal } from './textReveal';
 import { initTextFx, watchTextResize } from './textFx';
 import { initScrollEffects } from './scrollEffects';
 
+gsap.registerPlugin(ScrollTrigger);
+
 /**
- * Motion entry point — imported once from Base.astro. Every module guards
- * itself on prefers-reduced-motion. Reveal runs first (load-in), then the hover
- * effect wires onto the same shared split.
+ * Motion entry point. Runs on every `astro:page-load` so it survives the
+ * View Transitions crossfade. Lenis and the resize watcher are set up once;
+ * scroll effects and text effects are rebuilt per page. Every module is a
+ * no-op under prefers-reduced-motion.
  */
-async function start() {
-  initSmoothScroll();
+
+let booted = false;
+let firstLoad = true;
+
+async function setupPage() {
+  // Drop ScrollTriggers from the page we just left.
+  for (const t of ScrollTrigger.getAll()) t.kill();
+
   initScrollEffects();
-  await initTextReveal();
+  await initTextReveal(firstLoad); // block-wipe only on the first (hard) load
   initTextFx();
-  watchTextResize();
+  refreshSmoothScroll();
+  firstLoad = false;
 }
 
-// Split after fonts settle so line breaks and glyph widths are final.
-if (document.fonts && document.fonts.status !== 'loaded') {
-  document.fonts.ready.then(start, start);
-} else {
-  start();
+function run() {
+  if (!booted) {
+    booted = true;
+    initSmoothScroll();
+    watchTextResize();
+  }
+
+  if (document.fonts && document.fonts.status !== 'loaded') {
+    document.fonts.ready.then(setupPage, setupPage);
+  } else {
+    setupPage();
+  }
 }
+
+// Re-hide reveal targets on the incoming document so nothing flashes mid-swap.
+document.addEventListener('astro:before-swap', (e) => {
+  (e as { newDocument: Document }).newDocument.documentElement.classList.add(
+    'reveal-armed',
+  );
+});
+
+document.addEventListener('astro:page-load', run);
