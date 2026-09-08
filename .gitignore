@@ -47,6 +47,9 @@ pnpm-debug.log*
 tina/__generated__/
 public/admin/
 
+# ─── Cloudflare / Wrangler ───────────────────────────────
+.wrangler/
+
 # ─── OS / editor cruft ───────────────────────────────────
 .DS_Store
 Thumbs.db
