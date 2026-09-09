@@ -58,3 +58,6 @@ Thumbs.db
 !.vscode/extensions.json
 *.swp
 *.swo
+
+# Session handoff (local baton, not history)
+handoff.md
