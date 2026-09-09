@@ -69,73 +69,72 @@ const projects = await getProjects();
 
 <script>
   const GALLERY_INTERVAL = 2400;
+  let timer: number | undefined;
+  let bound = false;
 
-  function initHero() {
-    const hero = document.querySelector<HTMLElement>('[data-hero]');
-    if (!hero) return;
-    const layers = [...hero.querySelectorAll<HTMLElement>('[data-hero-layer]')];
-    if (!layers.length) return;
-    const caption = hero.querySelector<HTMLElement>('[data-hero-caption]');
-    const reduce = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    ).matches;
-
-    const select = (slug: string) => {
-      layers.forEach((l) =>
+  function selectFor(hero: HTMLElement, slug: string) {
+    hero
+      .querySelectorAll<HTMLElement>('[data-hero-layer]')
+      .forEach((l) =>
         l.setAttribute('data-selected', String(l.dataset.slug === slug)),
       );
-      const card = document.querySelector<HTMLElement>(
-        `[data-rail-card][data-slug="${slug}"], [data-work-card][data-slug="${slug}"]`,
-      );
-      if (caption && card) {
-        const title = caption.querySelector('.hero__title');
-        const desc = caption.querySelector('.hero__desc');
-        if (title)
-          title.textContent =
-            card.querySelector('.rail-card__title, .work-card__title')
-              ?.textContent ?? title.textContent;
-        if (desc)
-          desc.textContent =
-            card.querySelector('.rail-card__desc, .work-card__meta')
-              ?.textContent ?? desc.textContent;
-      }
-    };
+    const card = document.querySelector<HTMLElement>(
+      `[data-rail-card][data-slug="${slug}"], [data-work-card][data-slug="${slug}"]`,
+    );
+    const caption = hero.querySelector<HTMLElement>('[data-hero-caption]');
+    if (!caption || !card) return;
+    const title = caption.querySelector('.hero__title');
+    const desc = caption.querySelector('.hero__desc');
+    const src = card.querySelector('.rail-card__title, .work-card__title');
+    const dsc = card.querySelector('.rail-card__desc, .work-card__meta');
+    if (title && src) title.textContent = src.textContent;
+    if (desc && dsc) desc.textContent = dsc.textContent;
+  }
 
-    // Hover en las project cards del rail (solo punteros finos).
-    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-      document
-        .querySelectorAll<HTMLElement>('[data-rail-card]')
-        .forEach((card) => {
-          card.addEventListener('pointerenter', () => {
-            const slug = card.dataset.slug;
-            if (slug) select(slug);
-          });
-        });
-    }
+  function stopGallery() {
+    if (timer) window.clearInterval(timer);
+    timer = undefined;
+  }
 
-    // Modo galería: auto-ciclo.
-    let timer: number | undefined;
+  function startGallery() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    stopGallery();
     let idx = 0;
-    const stop = () => {
-      if (timer) window.clearInterval(timer);
-      timer = undefined;
-    };
-    const start = () => {
-      if (reduce) return;
-      stop();
-      timer = window.setInterval(() => {
-        idx = (idx + 1) % layers.length;
-        select(layers[idx].dataset.slug ?? '');
-      }, GALLERY_INTERVAL);
-    };
+    timer = window.setInterval(() => {
+      const hero = document.querySelector<HTMLElement>('[data-hero]');
+      const layers = hero
+        ? [...hero.querySelectorAll<HTMLElement>('[data-hero-layer]')]
+        : [];
+      if (!hero || !layers.length) return stopGallery();
+      idx = (idx + 1) % layers.length;
+      selectFor(hero, layers[idx].dataset.slug ?? '');
+    }, GALLERY_INTERVAL);
+  }
 
-    window.addEventListener('gallery-toggle', (e) => {
-      const on = (e as CustomEvent<{ on: boolean }>).detail.on;
-      if (on) start();
-      else stop();
-    });
-    hero.addEventListener('astro:before-swap' as never, stop);
-    document.addEventListener('astro:before-swap', stop, { once: true });
+  function initHero() {
+    stopGallery();
+    const hero = document.querySelector<HTMLElement>('[data-hero]');
+    if (!hero) return;
+
+    // Listeners sobre elementos persistentes (rail, window, document): una vez.
+    if (!bound) {
+      bound = true;
+      if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+        document.addEventListener('pointerover', (e) => {
+          const t = e.target;
+          if (!(t instanceof Element)) return;
+          const card = t.closest<HTMLElement>('[data-rail-card]');
+          const active = document.querySelector<HTMLElement>('[data-hero]');
+          if (card?.dataset.slug && active)
+            selectFor(active, card.dataset.slug);
+        });
+      }
+      window.addEventListener('gallery-toggle', (e) => {
+        if ((e as CustomEvent<{ on: boolean }>).detail.on) startGallery();
+        else stopGallery();
+      });
+      document.addEventListener('astro:before-swap', stopGallery);
+    }
   }
 
   document.addEventListener('astro:page-load', initHero);
