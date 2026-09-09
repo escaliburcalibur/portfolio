@@ -12,7 +12,7 @@ const { title, railDescription } = project.data;
 ---
 
 <a
-  class="rail-card"
+  class="rail-card nav-panel"
   href={withBase(`/${project.id}`)}
   data-rail-card
   data-slug={project.id}
@@ -35,12 +35,6 @@ const { title, railDescription } = project.data;
     align-items: start;
     padding: var(--pd-2);
     border-radius: var(--br-nav);
-    background: var(--color-card);
-    transition: background-color var(--dur) var(--ease);
-  }
-  .rail-card:hover,
-  .rail-card[aria-current='true'] {
-    background: var(--color-fg-10);
   }
   .rail-card__thumb {
     display: block;

@@ -1,6 +1,14 @@
 ---
-import { SITE, canonical, absoluteUrl, type PageSeo } from '@lib/seo';
+import {
+  SITE,
+  canonical,
+  absoluteUrl,
+  organizationLd,
+  websiteLd,
+  type PageSeo,
+} from '@lib/seo';
 import { withBase } from '@lib/url';
+import { getSettings } from '@lib/content';
 
 type Props = PageSeo;
 
@@ -17,6 +25,10 @@ const {
 const fullTitle = title === SITE.name ? title : `${title} — ${SITE.name}`;
 const canonicalUrl = canonical(path);
 const ogImageUrl = absoluteUrl(ogImage);
+
+const settings = await getSettings();
+const socials = settings.socials.map((s) => s.href);
+const siteLd = [organizationLd(socials), websiteLd()];
 ---
 
 <meta charset="utf-8" />
@@ -51,6 +63,13 @@ const ogImageUrl = absoluteUrl(ogImage);
 />
 
 <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
+<link
+  rel="icon"
+  href={withBase('/favicon-32.png')}
+  sizes="32x32"
+  type="image/png"
+/>
+<link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')} />
 <link rel="manifest" href={withBase('/site.webmanifest')} />
 <link
   rel="alternate"
@@ -59,19 +78,8 @@ const ogImageUrl = absoluteUrl(ogImage);
   href={withBase('/rss.xml')}
 />
 
-<script
-  is:inline
-  type="application/ld+json"
-  set:html={JSON.stringify({
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    url: SITE.url,
-    name: SITE.title,
-    inLanguage: SITE.lang,
-  })}
-/>
 {
-  jsonLd.map((block) => (
+  [...siteLd, ...jsonLd].map((block) => (
     <script
       is:inline
       type="application/ld+json"

@@ -40,7 +40,9 @@ import { withBase } from '@lib/url';
       {/* Reloj en vivo — aplazado; el hueco queda maquetado. */}
     </div>
 
-    <a class="sidebar__about" href={withBase('/sobre-mi')} data-fx>Sobre mí</a>
+    <a class="sidebar__about nav-panel" href={withBase('/sobre-mi')} data-fx>
+      Sobre mí
+    </a>
 
     <ProjectRail />
   </div>
@@ -82,8 +84,16 @@ import { withBase } from '@lib/url';
   .sidebar__about {
     font-size: var(--text-small);
     font-weight: var(--weight-medium);
-    padding-block: var(--pd-2);
-    border-block: 1px solid var(--color-line);
+    padding: var(--pd-2) var(--pd);
+    border-radius: var(--br-nav);
+  }
+
+  /* Blur al hacer scroll bajo el rail (escritorio). */
+  @media (width >= 41rem) {
+    .sidebar[data-scrolled='true'] {
+      backdrop-filter: blur(50px);
+      background: color-mix(in srgb, var(--color-bg) 70%, transparent);
+    }
   }
 
   /* ── Móvil (≤656px): panel como overlay ── */
@@ -165,7 +175,24 @@ import { withBase } from '@lib/url';
         if ((e.target as HTMLElement).closest('a')) setOpen(false);
       });
   }
-  document.addEventListener('astro:page-load', wire);
+  // Blur del rail cuando su propio contenido se ha desplazado.
+  function wireScroll() {
+    const s = document.querySelector<HTMLElement>('[data-sidebar]');
+    if (!s || s.dataset.scrollWired) return;
+    s.dataset.scrollWired = '1';
+    s.addEventListener(
+      'scroll',
+      () => {
+        s.dataset.scrolled = String(s.scrollTop > 8);
+      },
+      { passive: true },
+    );
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    wire();
+    wireScroll();
+  });
   // El panel puede persistir entre navegaciones (transition:persist); re-cierra.
   document.addEventListener('astro:after-swap', () => {
     const s = document.querySelector<HTMLElement>('[data-sidebar]');

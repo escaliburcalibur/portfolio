@@ -37,3 +37,54 @@
   background: var(--color-card);
   overflow: hidden;
 }
+
+/* ── Panel con gradiente animado (nav-cards, à la Porto Rocha) ──
+   Las propiedades registradas permiten transicionar el gradiente. */
+@property --nav-g1 {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #242424;
+}
+
+@property --nav-g2 {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #1a1a1a;
+}
+
+.nav-panel {
+  --nav-g1: #242424;
+  --nav-g2: #1a1a1a;
+
+  background: radial-gradient(
+    76% 130% at 24% 65%,
+    var(--nav-g1) 0,
+    var(--nav-g2) 100%
+  );
+  transition:
+    --nav-g1 var(--dur) var(--ease),
+    --nav-g2 var(--dur) var(--ease);
+}
+
+.nav-panel:hover,
+.nav-panel[aria-current='true'] {
+  --nav-g1: #4e4e4e;
+  --nav-g2: #242424;
+}
+
+:root[data-theme='light'] .nav-panel {
+  --nav-g1: #efefef;
+  --nav-g2: #d9d6d5;
+}
+
+:root[data-theme='light'] .nav-panel:hover,
+:root[data-theme='light'] .nav-panel[aria-current='true'] {
+  --nav-g1: #ffffff;
+  --nav-g2: #e6e3e2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-panel {
+    transition: none;
+  }
+}
