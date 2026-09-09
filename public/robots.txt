@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
 
-# TODO: swap in the real domain once purchased.
-Sitemap: https://portfolio.pages.dev/sitemap-index.xml
+Sitemap: https://escaliburcalibur.github.io/portfolio/sitemap-index.xml

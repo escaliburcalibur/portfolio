@@ -1,68 +1,136 @@
 /**
- * SEO helpers — one place to assemble <head> metadata and JSON-LD.
- * Kept framework-agnostic (plain data in, plain objects out) so it can be
- * unit-tested and reused from endpoints (dynamic OG, sitemap extras).
+ * Helpers de SEO: metadatos por página + JSON-LD.
+ * Funciones puras → objetos; los layouts los serializan.
  */
 
-export interface SiteMeta {
-  /** Absolute site origin, e.g. https://studio.com (no trailing slash). */
-  origin: string;
-  name: string;
-  /** Default social share image, site-relative or absolute. */
-  defaultOgImage: string;
-  locale: string;
-  twitter?: string;
-}
+const ORIGIN = (
+  import.meta.env.SITE ?? 'https://escaliburcalibur.github.io'
+).replace(/\/$/, '');
+const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
 
-export const SITE: SiteMeta = {
-  origin: (import.meta.env.SITE ?? 'https://portfolio.pages.dev').replace(
-    /\/$/,
-    '',
-  ),
+export const SITE = {
+  origin: ORIGIN,
+  base: BASE,
+  /** URL raíz pública, con base incluida. */
+  url: `${ORIGIN}${BASE}` || ORIGIN,
   name: 'David Bayón',
+  title: 'David Bayón — Estudio de diseño',
+  description:
+    'Estudio de diseño de David Bayón: branding, estrategia de marca, motion, 3D, ' +
+    'diseño web, UI/UX y desarrollo creativo. Portafolio de proyectos y servicios.',
+  locale: 'es_ES',
+  lang: 'es',
   defaultOgImage: '/og/default.png',
-  locale: 'en',
-  twitter: undefined,
-};
+  twitter: undefined as string | undefined,
+} as const;
 
 export interface PageSeo {
   title: string;
   description: string;
-  /** Path beginning with "/". */
+  /** Ruta absoluta desde la raíz del sitio, SIN base. P. ej. '/proyectos'. */
   path: string;
   ogImage?: string;
-  /** e.g. "website" | "article" | "profile" */
-  type?: string;
-  /** Set true on pages that should not be indexed. */
+  type?: 'website' | 'article' | 'profile';
   noindex?: boolean;
+  /** Bloques JSON-LD extra para esta página. */
+  jsonLd?: Record<string, unknown>[];
 }
 
+/** URL canónica absoluta (con base). */
 export function canonical(path: string): string {
-  return `${SITE.origin}${path === '/' ? '' : path}`;
+  const clean = path === '/' ? '' : path.replace(/\/$/, '');
+  return `${SITE.url}${clean.startsWith('/') || clean === '' ? clean : `/${clean}`}`;
 }
 
-export function absoluteUrl(pathOrUrl: string): string {
-  if (/^https?:\/\//.test(pathOrUrl)) return pathOrUrl;
-  return `${SITE.origin}${pathOrUrl.startsWith('/') ? '' : '/'}${pathOrUrl}`;
+/** Convierte una ruta relativa de asset en URL absoluta (con base). */
+export function absoluteUrl(path: string): string {
+  if (/^https?:\/\//.test(path)) return path;
+  const clean = path.startsWith('/') ? path : `/${path}`;
+  return `${SITE.url}${clean}`;
 }
 
-/** Organization / ProfessionalService node — emitted site-wide. */
-export function organizationLd() {
+export const DISCIPLINES = [
+  'branding',
+  'brand-strategy',
+  'motion',
+  '3d',
+  'web-design',
+  'ui-ux',
+  'creative-dev',
+] as const;
+
+export const DISCIPLINE_LABELS: Record<(typeof DISCIPLINES)[number], string> = {
+  branding: 'Branding',
+  'brand-strategy': 'Estrategia de marca',
+  motion: 'Motion',
+  '3d': '3D',
+  'web-design': 'Diseño web',
+  'ui-ux': 'UI/UX',
+  'creative-dev': 'Desarrollo creativo',
+};
+
+/** Nodo Organization / ProfessionalService, emitido en todo el sitio. */
+export function organizationLd(
+  socials: string[] = [],
+): Record<string, unknown> {
   return {
     '@context': 'https://schema.org',
     '@type': 'ProfessionalService',
+    '@id': `${SITE.url}#studio`,
     name: SITE.name,
-    url: SITE.origin,
-    image: absoluteUrl(SITE.defaultOgImage),
-    knowsAbout: [
-      'Branding',
-      'Brand strategy',
-      'Motion design',
-      '3D design',
-      'Web design',
-      'UI/UX design',
-      'Creative development',
-    ],
-    sameAs: [] as string[], // TODO: social profiles
+    url: SITE.url,
+    description: SITE.description,
+    knowsAbout: DISCIPLINES.map((d) => DISCIPLINE_LABELS[d]),
+    sameAs: socials,
   };
+}
+
+export function personLd(socials: string[] = []): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    '@id': `${SITE.url}#david`,
+    name: 'David Bayón',
+    jobTitle: 'Diseñador',
+    url: `${SITE.url}/sobre-mi`,
+    knowsAbout: DISCIPLINES.map((d) => DISCIPLINE_LABELS[d]),
+    sameAs: socials,
+  };
+}
+
+export function websiteLd(): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': `${SITE.url}#website`,
+    url: SITE.url,
+    name: SITE.title,
+    inLanguage: SITE.lang,
+  };
+}
+
+export function breadcrumbLd(
+  items: { name: string; path: string }[],
+): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((it, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: it.name,
+      item: canonical(it.path),
+    })),
+  };
+}
+
+/** Aviso en build si una meta description se sale del rango recomendado. */
+export function checkDescription(desc: string, where: string): string {
+  const n = desc.length;
+  if (n < 70 || n > 160) {
+    console.warn(
+      `[seo] description de ${where} mide ${n} car. (recomendado 70–160)`,
+    );
+  }
+  return desc;
 }

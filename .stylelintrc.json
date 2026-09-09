@@ -21,6 +21,10 @@
       }
     ],
     "import-notation": null,
+    "property-no-vendor-prefix": [
+      true,
+      { "ignoreProperties": ["text-size-adjust"] }
+    ],
     "custom-property-pattern": null,
     "selector-class-pattern": null,
     "no-descending-specificity": null,

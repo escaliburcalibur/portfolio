@@ -1,64 +1,53 @@
-/* ── Motion: text hover effect + load-in reveal ─────────────
-   Behaviour lives in src/lib/motion/**. This file is only the paint.
-   Scrolling is native (no smoothing). */
+/* ─── Pintura para las animaciones de texto ──────────────────────
+   El comportamiento vive en src/lib/motion/*. Aquí solo estilos.
+   Nada de esto aplica bajo prefers-reduced-motion (ver más abajo). */
 
-[data-text-fx] {
+[data-fx] {
   cursor: crosshair;
-}
-
-/* Split character. Colour and border are animated inline by GSAP on hover;
-   position:relative lets it host the annotation. */
-.fx-char {
-  position: relative;
-  display: inline-block;
-}
-
-/* The `△x = NNpx` annotation a character can sprout mid-hover. */
-.detail-size {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  min-width: 50px;
-  height: 1px;
-  font-size: 11px;
-}
-
-/* ── Load-in reveal ───────────────────────────────────────── */
-
-/* Keep reveal targets hidden until their timeline takes over. The class is
-   added synchronously in <head> and removed by initTextReveal (or a failsafe),
-   so a JS failure never leaves text invisible for long. */
-@media (prefers-reduced-motion: no-preference) {
-  html.reveal-armed [data-text-reveal] {
-    visibility: hidden;
-  }
-
-  html.reveal-armed [data-reveal] {
-    opacity: 0;
-  }
 }
 
 .fx-line {
   position: relative;
 }
 
-/* The cursor block that rides the leading edge of the sweep. */
-.reveal-block {
-  position: absolute;
-  inset-block-start: 0.1em;
-  inset-inline-start: 0;
-  inline-size: 1.4ch;
-  block-size: 0.82em;
-  transform-origin: left center;
-  background: var(--color-content);
-  mix-blend-mode: difference;
-  pointer-events: none;
-  visibility: hidden;
-  will-change: transform;
+.fx-char {
+  position: relative;
+  display: inline-block;
+  will-change: transform, color;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  [data-text-fx] {
-    cursor: auto;
+/* Anotación △x = NNpx del CodePen */
+.detail-size {
+  position: absolute;
+  inset-block-end: 0;
+  inline-size: 100%;
+  min-inline-size: 50px;
+  block-size: 1px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--color-fg-50);
+  pointer-events: none;
+}
+
+/* Bloque-cursor del "block-wipe" de carga */
+.reveal-block {
+  position: absolute;
+  inset-block-start: 0.08em;
+  inline-size: 1.4ch;
+  block-size: 0.82em;
+  background: var(--color-fg);
+  mix-blend-mode: difference;
+  will-change: transform;
+  pointer-events: none;
+}
+
+/* Estado armado: oculta lo que va a revelarse, SOLO si hay animación. */
+@media (prefers-reduced-motion: no-preference) {
+  html.reveal-armed [data-reveal-text] {
+    visibility: hidden;
+  }
+
+  html.reveal-armed [data-reveal] {
+    opacity: 0;
   }
 }

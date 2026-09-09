@@ -1,6 +1,6 @@
 ---
-import { SITE, canonical, absoluteUrl, organizationLd } from '@lib/seo';
-import type { PageSeo } from '@lib/seo';
+import { SITE, canonical, absoluteUrl, type PageSeo } from '@lib/seo';
+import { withBase } from '@lib/url';
 
 type Props = PageSeo;
 
@@ -11,34 +11,33 @@ const {
   ogImage = SITE.defaultOgImage,
   type = 'website',
   noindex = false,
+  jsonLd = [],
 } = Astro.props;
 
-const url = canonical(path);
-const image = absoluteUrl(ogImage);
 const fullTitle = title === SITE.name ? title : `${title} — ${SITE.name}`;
-const orgLd = organizationLd();
+const canonicalUrl = canonical(path);
+const ogImageUrl = absoluteUrl(ogImage);
 ---
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
-<link rel="canonical" href={url} />
+<link rel="canonical" href={canonicalUrl} />
 {noindex && <meta name="robots" content="noindex, nofollow" />}
 
 <meta property="og:type" content={type} />
-<meta property="og:site_name" content={SITE.name} />
 <meta property="og:title" content={fullTitle} />
 <meta property="og:description" content={description} />
-<meta property="og:url" content={url} />
-<meta property="og:image" content={image} />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:image" content={ogImageUrl} />
 <meta property="og:locale" content={SITE.locale} />
+<meta property="og:site_name" content={SITE.name} />
 
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={fullTitle} />
 <meta name="twitter:description" content={description} />
-<meta name="twitter:image" content={image} />
-{SITE.twitter && <meta name="twitter:site" content={SITE.twitter} />}
+<meta name="twitter:image" content={ogImageUrl} />
 
 <meta
   name="theme-color"
@@ -51,16 +50,32 @@ const orgLd = organizationLd();
   media="(prefers-color-scheme: light)"
 />
 
-<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-<link rel="icon" href="/favicon-32.png" sizes="32x32" />
-<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-<link rel="manifest" href="/site.webmanifest" />
-<link rel="sitemap" href="/sitemap-index.xml" />
+<link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
+<link rel="manifest" href={withBase('/site.webmanifest')} />
 <link
   rel="alternate"
   type="application/rss+xml"
-  title={`${SITE.name} — Journal`}
-  href="/rss.xml"
+  title={`${SITE.name} — Diario`}
+  href={withBase('/rss.xml')}
 />
 
-<script type="application/ld+json" is:inline set:html={JSON.stringify(orgLd)} />
+<script
+  is:inline
+  type="application/ld+json"
+  set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    url: SITE.url,
+    name: SITE.title,
+    inLanguage: SITE.lang,
+  })}
+/>
+{
+  jsonLd.map((block) => (
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify(block)}
+    />
+  ))
+}

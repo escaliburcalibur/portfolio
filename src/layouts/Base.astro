@@ -1,41 +1,43 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 import Meta from '@layouts/Meta.astro';
-import type { PageSeo } from '@lib/seo';
-import { SITE } from '@lib/seo';
+import { SITE, type PageSeo } from '@lib/seo';
 import '@styles/global.css';
+import '@fontsource-variable/inter';
 
 type Props = PageSeo;
-
-const seo = Astro.props;
 ---
 
 <!doctype html>
-<html lang={SITE.locale}>
+<html lang={SITE.lang}>
   <head>
-    <Meta {...seo} />
+    <Meta {...Astro.props} />
     <ClientRouter />
-    <!-- Set the theme before paint to avoid a flash. -->
+    {/* Tema sin parpadeo: aplica localStorage antes de pintar. */}
     <script is:inline>
       (() => {
         try {
-          const stored = localStorage.getItem('theme');
-          if (stored === 'light' || stored === 'dark') {
-            document.documentElement.dataset.theme = stored;
+          const t = localStorage.getItem('theme');
+          if (t === 'light' || t === 'dark') {
+            document.documentElement.dataset.theme = t;
           }
         } catch {
-          /* private mode / blocked storage — fall back to the media query */
+          /* localStorage bloqueado — se usa prefers-color-scheme */
         }
-        // Arm the load-in reveal (hides its targets); the motion module or this
-        // failsafe removes it so text never stays hidden.
-        const d = document.documentElement;
-        d.classList.add('reveal-armed');
-        setTimeout(() => d.classList.remove('reveal-armed'), 4000);
+        const m = window.matchMedia('(prefers-reduced-motion: reduce)');
+        if (!m.matches) {
+          document.documentElement.classList.add('reveal-armed');
+          // failsafe: si el JS de motion no arranca, revela todo a los 4s
+          setTimeout(
+            () => document.documentElement.classList.remove('reveal-armed'),
+            4000,
+          );
+        }
       })();
     </script>
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="skip-link" href="#main">Saltar al contenido</a>
     <slot />
     <script>
       import '@lib/motion';

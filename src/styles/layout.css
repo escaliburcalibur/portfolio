@@ -1,0 +1,45 @@
+/* ─── Shell de dos paneles (fiel a Porto Rocha) ──────────────── */
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+}
+
+.shell__rail {
+  /* wrapper transparente al layout: solo transporta transition:persist */
+  display: contents;
+}
+
+.shell__content {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: var(--pd-2);
+}
+
+.page-container {
+  /* full-bleed: sin max-width en ningún sitio */
+  width: 100%;
+}
+
+@media (width >= 41rem) {
+  .shell {
+    flex-direction: row;
+  }
+}
+
+/* Título único de página (<h1>). El resto de headings quedan planos. */
+.page-title {
+  font-size: var(--text-display-lg);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-label);
+  text-wrap: balance;
+}
+
+.eyebrow {
+  font-size: var(--text-meta);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-fg-50);
+}

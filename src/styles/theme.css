@@ -1,126 +1,135 @@
-/* ─────────────────────────────────────────────────────────────
-   Design tokens — dark-first, strictly monochrome (black / white +
-   greys, no accent hue), rounded "card" system. Fluid type & spacing
-   via clamp(). Semantic names; change values here, not in components.
-   ───────────────────────────────────────────────────────────── */
+/* ───────────────────────────────────────────────────────────────
+   Tokens de diseño — fieles a portorocha.com.
+   Dark por defecto; light invierte los roles. Paleta casi monocroma
+   + un único acento (#007aff). Tipografía deliberadamente PLANA:
+   cuerpo ~14px, "display" ~23px, nada hero-scale.
+   Cambia valores AQUÍ, no en los componentes.
+   ─────────────────────────────────────────────────────────────── */
 @theme {
-  /* Colours — dark theme is the default (light overrides below).
-     "Accent" resolves to the content colour (inverse of the surface):
-     emphasis is done with weight/contrast, never with a colour. */
-  --color-surface: #000000;
-  --color-surface-elevated: #0a0a0a;
-  --color-surface-sunken: #000000;
-  --color-content: #f2f2f2;
-  --color-content-muted: #a1a1a1;
-  --color-content-faint: #6b6b6b;
-  --color-line: #262626;
-  --color-accent: var(--color-content);
-  --color-accent-content: var(--color-surface);
-  --color-focus-ring: var(--color-content);
+  /* ── Fuentes ──────────────────────────────────────────────────
+     Inter variable (self-hosted vía @fontsource-variable/inter).
+     Porto Rocha usa SF Pro (licencia Apple, no self-hostable);
+     Inter es la del CodePen de referencia y rinde igual en todo SO. */
+  --font-sans:
+    'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-mono:
+    ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
 
-  /* Radii */
-  --radius-card: 16px;
-  --radius-card-sm: 8px;
-  --radius-pill: 999px;
-
-  /* Spacing scale (fluid) — base grid 4 / 8 / 16 like Porto Rocha */
-  --spacing-3xs: clamp(0.25rem, 0.23rem + 0.1vw, 0.3rem);
-  --spacing-2xs: clamp(0.5rem, 0.46rem + 0.2vw, 0.625rem);
-  --spacing-xs: clamp(0.75rem, 0.69rem + 0.3vw, 0.9375rem);
-  --spacing-sm: clamp(1rem, 0.92rem + 0.4vw, 1.25rem);
-  --spacing-md: clamp(1.5rem, 1.38rem + 0.6vw, 1.875rem);
-  --spacing-lg: clamp(2.25rem, 2rem + 1.25vw, 3rem);
-  --spacing-xl: clamp(3.5rem, 3rem + 2.5vw, 5rem);
-  --spacing-2xl: clamp(5rem, 4rem + 5vw, 8rem);
-
-  /* ── Type scale ────────────────────────────────────────────
-     Porto Rocha's hierarchy is deliberately FLAT: two sizes carry
-     the page — body ~14px and "display" ~23px — plus a small meta
-     tier for dates/labels/eyebrows. Nothing hero-scale exists.
-       meta   ~11–12px   dates, eyebrows, nav meta, captions
-       small  ~13px      secondary text, rail descriptions
-       body   ~14px      paragraphs, default
-       display ~23px     ALL headings, section titles (h1–h4)
-       display-lg ~27px  rare — a single page-defining title
-     Mobile bumps the ratio so nothing gets too small. */
+  /* ── Escala tipográfica (clamp) — máximos bajos ───────────────
+       meta      ~11–12px  fechas, eyebrows, captions, nav meta
+       small     ~13px     texto secundario, descripciones de rail
+       body      ~14px     párrafos, por defecto
+       display   ~16–23px  h2 y títulos de sección (el tier "grande" real de PR)
+       display-lg ~22–36px  SOLO el <h1> único de cada página
+       feature   ~28–52px  opcional, una sola línea de statement en / */
   --text-meta: clamp(0.6875rem, 0.66rem + 0.14vw, 0.75rem);
   --text-small: clamp(0.8125rem, 0.79rem + 0.11vw, 0.875rem);
   --text-body: clamp(0.875rem, 0.85rem + 0.12vw, 0.9375rem);
   --text-display: clamp(1rem, 0.86rem + 0.7vw, 1.4375rem);
-  --text-display-lg: clamp(1.125rem, 0.94rem + 0.9vw, 1.6875rem);
-
-  /* Weights — SF Pro exposes 400 / 600 in this design */
+  --text-display-lg: clamp(1.375rem, 1.05rem + 1.6vw, 2.25rem);
+  --text-feature: clamp(1.75rem, 1.2rem + 2.6vw, 3.25rem);
   --weight-regular: 400;
   --weight-medium: 600;
+  --leading-tight: 1.15;
+  --leading-snug: 1.3;
+  --leading-body: 1.55;
+  --tracking-tight: -0.011em; /* ~-0.31px sobre 28px, cuerpo en ≤768 */
+  --tracking-label: 0.02em; /* ~+0.25..+0.45px, tier display / labels */
 
-  /* Line heights */
-  --leading-tight: 1.15; /* display */
-  --leading-snug: 1.35;
-  --leading-body: 1.55; /* paragraphs */
-  --tracking-tight: -0.01em;
-  --tracking-label: 0.06em; /* uppercased meta labels */
+  /* ── Espaciado / gutter ──────────────────────────────────────
+     Ritmo base de Porto Rocha: 16 / 8 / 4. Gutter global = 8px. */
+  --pd: 16px;
+  --pd-2: 8px;
+  --pd-3: 4px;
+  /* Escala fluida para ritmo vertical de secciones / case study */
+  --space-2xs: clamp(0.5rem, 0.46rem + 0.2vw, 0.625rem);
+  --space-xs: clamp(0.75rem, 0.69rem + 0.3vw, 0.9375rem);
+  --space-sm: clamp(1rem, 0.92rem + 0.4vw, 1.25rem);
+  --space-md: clamp(1.5rem, 1.38rem + 0.6vw, 1.875rem);
+  --space-lg: clamp(2.25rem, 2rem + 1.25vw, 3rem);
+  --space-xl: clamp(3.5rem, 3rem + 2.5vw, 5rem);
+  --space-2xl: clamp(5rem, 4rem + 5vw, 8rem);
 
-  /* ── Fonts ─────────────────────────────────────────────────
-     Porto Rocha runs on SF Pro Text (body) / SF Pro Display
-     (headings). SF Pro is Apple-licensed and cannot be self-hosted
-     as a webfont on a non-Apple site, so we use the system stack:
-     it renders as SF Pro natively on macOS/iOS (most of the design
-     audience) and falls back cleanly to Segoe UI / Roboto elsewhere.
-     Apple's optical sizing swaps Text↔Display by size automatically. */
-  --font-sans:
-    -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Segoe UI',
-    Roboto, Helvetica, Arial, sans-serif;
-  --font-display:
-    -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, 'Segoe UI',
-    Roboto, Helvetica, Arial, sans-serif;
-  --font-mono:
-    ui-monospace, 'SF Mono', 'JetBrains Mono', 'Fira Code', Menlo, monospace;
+  /* ── Radios ──────────────────────────────────────────────────
+     16 por defecto (12 en ≤768, ver base.css), 8 en cards, 10 en nav-cards.
+     La media de galería en case study va a 0 (full-bleed). */
+  --br: 16px;
+  --br-2: 8px;
+  --br-nav: 10px;
+  --br-pill: 999px;
 
-  /* Layout */
-  --layout-rail: 22.5rem; /* left sidebar width on desktop */
-  --layout-gutter: clamp(0.75rem, 0.5rem + 1.2vw, 1.5rem);
-  --layout-max: 90rem;
+  /* ── Layout ────────────────────────────────────────────────── */
+  --rail: 22.5rem; /* 360px — sidebar en escritorio */
+  --gutter: var(--pd); /* 16px; 12px en ≤768, ver base.css */
 
-  /* Motion */
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --dur-fast: 180ms;
-  --dur-base: 320ms;
-  --dur-slow: 520ms;
+  /* ── Motion ──────────────────────────────────────────────────
+     Porto Rocha: transiciones CSS uniformes a 0.5s, easing por defecto.
+     El lado GSAP usa power1.inOut / none. */
+  --dur: 0.5s;
+  --dur-fast: 0.3s;
+  --ease: ease;
 
-  /* Breakpoints (Tailwind v4 reads these for its screen variants) */
+  /* ── Breakpoints (Tailwind v4 los lee para sus variantes) ──── */
   --breakpoint-sm: 41rem; /* 656px — sidebar → top bar */
   --breakpoint-md: 48rem; /* 768px */
   --breakpoint-lg: 57rem; /* 912px */
   --breakpoint-xl: 64rem; /* 1024px */
   --breakpoint-2xl: 80rem; /* 1280px */
+
+  /* ── Color — DARK por defecto ────────────────────────────────
+     Un solo off-white para texto; los grises son ese texto a baja alfa.
+     El acento (#007aff) es lo único con tono. */
+  --color-bg: #000000;
+  --color-fg: #e2e6e3;
+  --color-fg-70: color-mix(in srgb, #e2e6e3 70%, transparent);
+  --color-fg-50: color-mix(in srgb, #e2e6e3 50%, transparent);
+  --color-fg-30: color-mix(in srgb, #e2e6e3 30%, transparent);
+  --color-fg-20: color-mix(in srgb, #e2e6e3 20%, transparent);
+  --color-fg-10: color-mix(in srgb, #e2e6e3 10%, transparent);
+  --color-line: color-mix(in srgb, #e2e6e3 14%, transparent);
+  --color-card: #1a1a1a;
+  --color-accent: #0a84ff;
+  --color-accent-ink: #ffffff;
+  --color-focus: #0a84ff;
+
+  /* Paleta de destello — SOLO para la animación de texto (CodePen).
+     No se usa en ningún otro sitio; el resto del sitio es monocromo. */
+  --flash-1: #85af00;
+  --flash-2: #ffcc00;
+  --flash-3: #fb9cfd;
+  --flash-4: #a19bff;
+  --flash-5: #ff4c00;
 }
 
-/* Light theme — invert surface/content roles. Still monochrome. */
+/* Light — invierte superficie/texto. Sigue monocromo. */
 :root[data-theme='light'] {
-  --color-surface: #ffffff;
-  --color-surface-elevated: #f5f5f5;
-  --color-surface-sunken: #ffffff;
-  --color-content: #0a0a0a;
-  --color-content-muted: #595959;
-  --color-content-faint: #8a8a8a;
-  --color-line: #e5e5e5;
-  --color-accent: var(--color-content);
-  --color-accent-content: var(--color-surface);
-  --color-focus-ring: var(--color-content);
+  --color-bg: #ffffff;
+  --color-fg: #000000;
+  --color-fg-70: color-mix(in srgb, #000000 64%, transparent);
+  --color-fg-50: color-mix(in srgb, #000000 50%, transparent);
+  --color-fg-30: color-mix(in srgb, #000000 30%, transparent);
+  --color-fg-20: color-mix(in srgb, #000000 18%, transparent);
+  --color-fg-10: color-mix(in srgb, #000000 8%, transparent);
+  --color-line: color-mix(in srgb, #000000 14%, transparent);
+  --color-card: #f5f5f5;
+  --color-accent: #007aff;
+  --color-focus: #007aff;
 }
 
-/* Respect the OS preference until the user picks explicitly. */
+/* Respeta la preferencia del SO hasta que el usuario elige de forma explícita. */
 @media (prefers-color-scheme: light) {
   :root:not([data-theme='dark']) {
-    --color-surface: #ffffff;
-    --color-surface-elevated: #f5f5f5;
-    --color-surface-sunken: #ffffff;
-    --color-content: #0a0a0a;
-    --color-content-muted: #595959;
-    --color-content-faint: #8a8a8a;
-    --color-line: #e5e5e5;
-    --color-accent: var(--color-content);
-    --color-accent-content: var(--color-surface);
-    --color-focus-ring: var(--color-content);
+    --color-bg: #ffffff;
+    --color-fg: #000000;
+    --color-fg-70: color-mix(in srgb, #000000 64%, transparent);
+    --color-fg-50: color-mix(in srgb, #000000 50%, transparent);
+    --color-fg-30: color-mix(in srgb, #000000 30%, transparent);
+    --color-fg-20: color-mix(in srgb, #000000 18%, transparent);
+    --color-fg-10: color-mix(in srgb, #000000 8%, transparent);
+    --color-line: color-mix(in srgb, #000000 14%, transparent);
+    --color-card: #f5f5f5;
+    --color-accent: #007aff;
+    --color-focus: #007aff;
   }
 }

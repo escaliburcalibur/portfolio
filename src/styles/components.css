@@ -1,0 +1,39 @@
+/* ─── Estilos transversales de componentes ───────────────────── */
+
+/* Enlaces de cuerpo: subrayado sutil + acento en hover */
+.prose a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  text-decoration-color: var(--color-fg-30);
+  transition: text-decoration-color var(--dur-fast) var(--ease);
+}
+
+.prose a:hover {
+  text-decoration-color: var(--color-accent);
+}
+
+.prose > * + * {
+  margin-block-start: var(--space-sm);
+}
+
+/* Botón de texto (nav, filtros, toggles) */
+.btn-text {
+  font-size: var(--text-small);
+  letter-spacing: var(--tracking-label);
+  color: var(--color-fg-70);
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.btn-text:hover,
+.btn-text[aria-pressed='true'],
+.btn-text[aria-current='true'] {
+  color: var(--color-fg);
+}
+
+/* Card genérica */
+.card {
+  border-radius: var(--br-2);
+  background: var(--color-card);
+  overflow: hidden;
+}

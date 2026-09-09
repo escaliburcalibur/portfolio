@@ -1,64 +1,76 @@
-# Portfolio / design studio
+# Portafolio — David Bayón
 
-Personal site for an independent design studio — branding, brand strategy,
-motion, 3D, web design, UI/UX and creative development.
+**En vivo:** _pendiente de primer despliegue_ → será `https://escaliburcalibur.github.io/portfolio`
 
-**Live:** _not deployed yet_ · will be a Cloudflare Pages URL, then a custom domain.
+Plantilla de portafolio para estudio de diseño. Estructura y lenguaje visual
+fieles a [portorocha.com](https://www.portorocha.com) (shell de dos paneles,
+barra lateral = índice de proyectos, hero de imágenes con crossfade, case
+studies como stream vertical de slices, transiciones de página tipo crossfade),
+con **código, textos, tipografías e imágenes 100 % originales**.
 
-## Structure
-
-Two-panel shell modelled on the architecture of portorocha.com (persistent left
-sidebar = project index + clock + theme toggle; right content pane; image-swap
-hero; "studio updates" grid; project pages as vertical slice streams). All code,
-copy and assets are original — the reference informs the architecture, not the
-source.
+Pensada para rellenar de contenido: los proyectos, disciplinas, testimonios y
+novedades viven como Markdown/JSON en `src/content/`.
 
 ## Stack
 
-| Area      | Choice                                                 |
-| --------- | ------------------------------------------------------ |
-| Framework | Astro 5 (static output, selective SSR/edge later)      |
-| Styling   | Tailwind CSS v4 (CSS-first `@theme` tokens)            |
-| Motion    | GSAP + Lenis + p5.js (behind `prefers-reduced-motion`) |
-| Content   | Tina CMS (git-backed) — Phase 2                        |
-| Leads     | Supabase + Resend + Cloudflare Turnstile — Phase 5     |
-| Media     | Cloudflare R2                                          |
-| Analytics | PostHog + Cloudflare Web Analytics                     |
-| Hosting   | Cloudflare Pages + GitHub Actions                      |
+| Área      | Elección                                                          |
+| --------- | ----------------------------------------------------------------- |
+| Framework | Astro 5 (salida estática)                                         |
+| Estilos   | Tailwind CSS v4 (tokens `@theme` en CSS)                          |
+| Animación | GSAP 3.13+ (ScrollTrigger, SplitText) + View Transitions de Astro |
+| Contenido | Astro Content Collections (Markdown / JSON)                       |
+| Contacto  | Formspree (sin backend)                                           |
+| Hosting   | GitHub Pages vía GitHub Actions                                   |
 
-Runs on free tiers; the only paid item is the domain.
+Requiere Node ≥ 22 (ver `.nvmrc`).
 
-## Develop
+## Desarrollo
 
 ```bash
+nvm use            # Node 22
 npm install
-npm run dev        # http://localhost:4321
+npm run dev        # http://localhost:4321/portfolio
 npm run build      # → dist/
 npm run preview
+npm run check      # astro check (TypeScript)
 npm run lint       # eslint + stylelint
 npm run format     # prettier --write
-npm run check      # astro type check
 ```
 
-Requires Node ≥ 22 (see `.nvmrc`).
+## Personalización
 
-## Roadmap
+| Qué                                                             | Dónde                                                 |
+| --------------------------------------------------------------- | ----------------------------------------------------- |
+| Proyectos / disciplinas / testimonios / diario                  | `src/content/**` (Markdown + JSON)                    |
+| Identidad, email, redes, clientes                               | `src/content/settings/site.json`                      |
+| Tokens de diseño (color, espaciado, tipografía, radios, motion) | `src/styles/theme.css`                                |
+| Lista de disciplinas                                            | `src/lib/seo.ts` (`DISCIPLINES`, `DISCIPLINE_LABELS`) |
+| Efecto de animación de texto                                    | `src/lib/motion/`                                     |
+| Dominio / base de URL                                           | `astro.config.mjs` (`SITE_URL`, `SITE_BASE`)          |
 
-Full plan in `~/.claude/plans/`. Phases: **0 scaffold** (done) → 1 shell →
-2 CMS + content model → 3 animation → 4 SEO layer → 5 lead engine → 6 QA & launch.
+### Dominio propio
 
-## Deploy
+Al comprar un dominio: pon `SITE_URL=https://tu-dominio` y `SITE_BASE=/` como
+variables del repositorio, añade `public/CNAME` con el dominio, y listo.
 
-CI (`.github/workflows/ci.yml`) runs format/lint/type-check/build/Lighthouse on
-every push. To enable auto-deploy: add repo secrets `CLOUDFLARE_API_TOKEN` and
-`CLOUDFLARE_ACCOUNT_ID`, set repo variable `DEPLOY_ENABLED=true`, and (once the
-domain exists) `SITE_URL`.
+## Despliegue
 
-## AI assistance disclosure
+`.github/workflows/deploy.yml` construye y publica a GitHub Pages en cada push a
+`main`. Activarlo una vez: **Settings → Pages → Source → GitHub Actions**.
 
-Architecture, scaffold and boilerplate were produced with AI assistance (Claude
-Code). All decisions, content and review are the author's.
+## Créditos
 
-## License
+- **Porto Rocha** — referencia de arquitectura e interacción (no de código ni contenido).
+- **Andrea Catanzaro** — efecto de scramble de texto, adaptado del CodePen `bNgyqbp`.
+- **web-atelier-udit** (Rubén Vega Balbás, UDIT) — checklist de buenas prácticas.
 
-Proprietary — all rights reserved. See [LICENSE](LICENSE).
+## Asistencia de IA
+
+La arquitectura, el scaffold y el boilerplate se produjeron con asistencia de IA
+(Claude Code). Las decisiones, el contenido y la revisión son del autor.
+El plan de desarrollo está en `docs/plan1.md`.
+
+## Licencia
+
+Código bajo [MIT](LICENSE). El contenido escrito, las imágenes y el nombre/
+wordmark "David Bayón" son © David Bayón Mateo y no entran en la licencia MIT.

@@ -1,19 +1,24 @@
-// @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
-// TODO: replace with the real domain once purchased (also update site.webmanifest / robots.txt).
-const SITE = process.env.SITE_URL ?? 'https://portfolio.pages.dev';
+// GitHub Pages project site: https://escaliburcalibur.github.io/portfolio
+// When a custom domain is added: set SITE_URL to it and BASE to '/'.
+const SITE = process.env.SITE_URL ?? 'https://escaliburcalibur.github.io';
+const BASE = process.env.SITE_BASE ?? '/portfolio';
 
-// https://astro.build/config
 export default defineConfig({
   site: SITE,
+  base: BASE,
   output: 'static',
   trailingSlash: 'never',
-  prefetch: { prefetchAll: true, defaultStrategy: 'viewport' },
   build: { format: 'file' },
-  integrations: [sitemap()],
+  prefetch: { prefetchAll: true, defaultStrategy: 'viewport' },
+  integrations: [
+    sitemap({
+      filter: (page) => !page.endsWith('/404'),
+    }),
+  ],
   vite: {
     plugins: [tailwindcss()],
   },

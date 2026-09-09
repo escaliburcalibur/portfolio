@@ -1,27 +1,35 @@
 ---
-import { site } from '@lib/site';
+import { withBase } from '@lib/url';
 
 interface Props {
-  /** When true, renders as a plain span (for use inside another link). */
+  /** Renderiza un <span> en vez de un enlace (p. ej. dentro de otro <a>). */
   asText?: boolean;
 }
 const { asText = false } = Astro.props;
-const Tag = asText ? 'span' : 'a';
-const attrs = asText
-  ? {}
-  : { href: '/', 'aria-label': `${site.wordmark} — home` };
+const label = 'David Bayón';
 ---
 
-<Tag class="wordmark" data-text-fx {...attrs}>{site.wordmark}</Tag>
+{
+  asText ? (
+    <span class="wordmark">{label}</span>
+  ) : (
+    <a
+      class="wordmark"
+      href={withBase('/')}
+      data-fx
+      aria-label={`${label} — inicio`}
+    >
+      {label}
+    </a>
+  )
+}
 
 <style>
   .wordmark {
     display: inline-block;
-    font-family: var(--font-display);
     font-size: var(--text-display);
-    font-weight: var(--weight-regular);
-    letter-spacing: var(--tracking-tight);
+    font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-label);
     line-height: 1;
-    color: var(--color-content);
   }
 </style>
