@@ -39,9 +39,22 @@ export function initScroll(): void {
       y: 0,
       duration: 0.5,
       ease: 'power1.inOut',
+      overwrite: 'auto',
       scrollTrigger: { trigger: el, start: 'top 88%', once: true },
     });
   });
+
+  // Failsafe con setTimeout (no depende del rAF de GSAP, que se congela con la
+  // pestaña oculta): si un reveal dentro del viewport se queda a medias, se
+  // fuerza visible. Los que están por debajo del fold conservan su reveal.
+  window.setTimeout(() => {
+    reveals.forEach((el) => {
+      const inView = el.getBoundingClientRect().top < window.innerHeight;
+      if (inView && parseFloat(getComputedStyle(el).opacity) < 0.99) {
+        gsap.set(el, { autoAlpha: 1, y: 0 });
+      }
+    });
+  }, 4500);
 }
 
 export function killScroll(): void {
