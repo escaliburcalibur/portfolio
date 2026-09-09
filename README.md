@@ -55,14 +55,14 @@ variables del repositorio, añade `public/CNAME` con el dominio, y listo.
 
 ## Despliegue
 
-`.github/workflows/deploy.yml` construye y publica a GitHub Pages, pero está en
-**modo manual** (`workflow_dispatch`): no publica nada en los push. Para publicar:
+`.github/workflows/deploy.yml` construye y publica a GitHub Pages en cada push a
+`main` (y también a mano desde **Actions → "Deploy to GitHub Pages" → Run
+workflow**).
 
-1. Una vez: **Settings → Pages → Source → GitHub Actions**.
-2. Cada vez: **Actions → "Deploy to GitHub Pages" → Run workflow**.
+Requisito único: **Settings → Pages → Source → GitHub Actions**.
 
-Para pasar a despliegue continuo, cambia el `on:` del workflow a
-`push: { branches: [main] }`.
+Para pausar el despliegue automático, deja solo `workflow_dispatch:` en el `on:`
+del workflow.
 
 ## Créditos
 

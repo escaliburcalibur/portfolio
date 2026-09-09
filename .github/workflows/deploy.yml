@@ -1,9 +1,10 @@
 name: Deploy to GitHub Pages
 
-# MANUAL por ahora: no se publica en ningún push. Para publicar, lanzar el
-# workflow a mano (pestaña Actions → "Deploy to GitHub Pages" → Run workflow),
-# o cambiar el trigger a `push: { branches: [main] }` cuando se quiera CD.
+# Despliegue continuo: publica en cada push a main. Para pausarlo, deja solo
+# `workflow_dispatch:` y lanza el workflow a mano cuando quieras.
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
