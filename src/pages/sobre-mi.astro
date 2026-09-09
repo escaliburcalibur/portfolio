@@ -1,0 +1,195 @@
+---
+import { getEntry, render } from 'astro:content';
+import Shell from '@layouts/Shell.astro';
+import Placeholder from '@components/Placeholder.astro';
+import ContactForm from '@components/ui/ContactForm.astro';
+import { withBase } from '@lib/url';
+import {
+  getDisciplines,
+  getTestimonials,
+  getSettings,
+  disciplineLabel,
+} from '@lib/content';
+import {
+  personLd,
+  breadcrumbLd,
+  checkDescription,
+  type PageSeo,
+} from '@lib/seo';
+
+const page = await getEntry('pages', 'about');
+if (!page) throw new Error('Falta src/content/pages/about.md');
+const { Content } = await render(page);
+
+const disciplines = await getDisciplines();
+const testimonials = await getTestimonials();
+const settings = await getSettings();
+
+const seo: PageSeo = {
+  title: page.data.title,
+  description: checkDescription(page.data.description, 'sobre-mi'),
+  path: '/sobre-mi',
+  type: 'profile',
+  jsonLd: [
+    personLd(settings.socials.map((s) => s.href)),
+    breadcrumbLd([
+      { name: 'Inicio', path: '/' },
+      { name: 'Sobre mí', path: '/sobre-mi' },
+    ]),
+  ],
+};
+---
+
+<Shell {...seo}>
+  <div class="about">
+    <div class="about__main">
+      <h1 class="page-title" data-fx data-reveal-text>{page.data.title}</h1>
+      <div class="prose about__prose">
+        <Content />
+      </div>
+
+      <section class="about__block" aria-label="Servicios">
+        <h2 class="about__block-title eyebrow" data-fx>Servicios</h2>
+        <ul role="list" class="about__services">
+          {
+            disciplines.map((d) => (
+              <li>
+                <a href={withBase(`/servicios/${d.id}`)} data-fx>
+                  {d.data.name}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <section class="about__block" aria-label="Testimonios">
+        <h2 class="about__block-title eyebrow" data-fx>Testimonios</h2>
+        <ul role="list" class="about__words">
+          {
+            testimonials.map((t) => (
+              <li class="word">
+                <blockquote>{t.data.quote}</blockquote>
+                <p class="word__by">
+                  {t.data.author} — {t.data.role}, {t.data.company}
+                  {t.data.disciplineTags.length > 0 && (
+                    <span class="word__tags">
+                      {' · '}
+                      {t.data.disciplineTags
+                        .map((d) => disciplineLabel(d))
+                        .join(', ')}
+                    </span>
+                  )}
+                </p>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <section class="about__block" aria-label="Contacto" id="contacto">
+        <h2 class="about__block-title eyebrow" data-fx>Contacto</h2>
+        <ContactForm />
+      </section>
+    </div>
+
+    <aside class="about__rail">
+      <Placeholder ratio="4 / 5" label="Retrato" />
+      <dl class="about__meta">
+        <div><dt>Ubicación</dt><dd>{settings.location}</dd></div>
+        <div><dt>Disponibilidad</dt><dd>{settings.availability}</dd></div>
+        <div>
+          <dt>Email</dt>
+          <dd>
+            <a href={`mailto:${settings.email}`} data-fx>{settings.email}</a>
+          </dd>
+        </div>
+      </dl>
+      <ul role="list" class="about__socials">
+        {
+          settings.socials.map((s) => (
+            <li>
+              <a href={s.href} target="_blank" rel="noopener" data-fx>
+                {s.label} ↗
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <ul role="list" class="about__clients">
+        {settings.clients.map((c) => <li>{c}</li>)}
+      </ul>
+    </aside>
+  </div>
+
+  <style>
+    .about {
+      display: grid;
+      gap: var(--space-lg);
+    }
+    @media (width >= 57rem) {
+      .about {
+        grid-template-columns: 1.5fr 1fr;
+      }
+      .about__rail {
+        position: sticky;
+        inset-block-start: var(--gutter);
+        align-self: start;
+      }
+    }
+    .about__block {
+      margin-block-start: var(--space-xl);
+    }
+    .about__block-title {
+      margin-block-end: var(--pd);
+    }
+    .about__services {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--pd) var(--space-md);
+      font-size: var(--text-small);
+    }
+    .about__words {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+    .word blockquote {
+      font-size: var(--text-display);
+    }
+    .word__by {
+      margin-block-start: 0.5rem;
+      font-size: var(--text-meta);
+      color: var(--color-fg-50);
+    }
+    .about__rail {
+      display: flex;
+      flex-direction: column;
+      gap: var(--pd);
+    }
+    .about__meta div {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--pd);
+      padding-block: 0.25rem;
+      font-size: var(--text-small);
+      border-block-end: 1px solid var(--color-line);
+    }
+    .about__meta dt {
+      color: var(--color-fg-50);
+    }
+    .about__socials {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--pd);
+      font-size: var(--text-small);
+    }
+    .about__clients {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem var(--pd);
+      font-size: var(--text-meta);
+      color: var(--color-fg-50);
+    }
+  </style>
+</Shell>

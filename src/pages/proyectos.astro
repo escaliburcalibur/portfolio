@@ -1,0 +1,50 @@
+---
+import Shell from '@layouts/Shell.astro';
+import FilterBar from '@components/work/FilterBar.astro';
+import WorkCard from '@components/work/WorkCard.astro';
+import { getProjects } from '@lib/content';
+import { checkDescription, type PageSeo } from '@lib/seo';
+
+const projects = await getProjects();
+
+const seo: PageSeo = {
+  title: 'Proyectos',
+  description: checkDescription(
+    'Todos los proyectos de David Bayón: branding, estrategia de marca, motion, 3D, diseño web, UI/UX y desarrollo creativo. Filtra por disciplina.',
+    'proyectos',
+  ),
+  path: '/proyectos',
+};
+---
+
+<Shell {...seo}>
+  <h1 class="page-title" data-fx data-reveal-text>Proyectos</h1>
+  <FilterBar />
+  <ul role="list" class="work-grid">
+    {
+      projects.map((project) => (
+        <li>
+          <WorkCard project={project} />
+        </li>
+      ))
+    }
+  </ul>
+
+  <style>
+    .work-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--pd);
+    }
+    @media (width < 48rem) {
+      .work-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (width < 30rem) {
+      .work-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</Shell>

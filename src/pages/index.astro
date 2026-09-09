@@ -1,9 +1,9 @@
 ---
 import Shell from '@layouts/Shell.astro';
+import HeroSwap from '@components/home/HeroSwap.astro';
+import UpdatesGrid from '@components/home/UpdatesGrid.astro';
 import { SITE, checkDescription, type PageSeo } from '@lib/seo';
 
-// Milestone 1: solo el shell + un <h1>. El HeroSwap y el feed de novedades
-// llegan en Milestone 2.
 const seo: PageSeo = {
   title: SITE.name,
   description: checkDescription(SITE.description, 'index'),
@@ -13,17 +13,7 @@ const seo: PageSeo = {
 ---
 
 <Shell {...seo}>
-  <h1 class="page-title" data-fx data-reveal-text>David Bayón</h1>
-  <p class="lede" data-reveal>
-    Estudio de diseño — branding, estrategia de marca, motion, 3D, diseño web,
-    UI/UX y desarrollo creativo.
-  </p>
-
-  <style>
-    .lede {
-      max-width: 46ch;
-      margin-block-start: var(--space-sm);
-      color: var(--color-fg-70);
-    }
-  </style>
+  <h1 class="sr-only">David Bayón — Estudio de diseño</h1>
+  <HeroSwap />
+  <UpdatesGrid />
 </Shell>

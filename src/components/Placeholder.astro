@@ -1,0 +1,43 @@
+---
+// Caja con aspect-ratio para media que aún no existe. Se sustituye por
+// <Image> de astro:assets cuando haya archivos reales.
+interface Props {
+  ratio?: string;
+  label?: string;
+  class?: string;
+}
+const { ratio = '3 / 2', label, class: className } = Astro.props;
+---
+
+<div
+  class:list={['ph', className]}
+  style={`aspect-ratio: ${ratio}`}
+  role="img"
+  aria-label={label ?? 'Imagen de relleno'}
+>
+  {label && <span class="ph__label">{label}</span>}
+</div>
+
+<style>
+  .ph {
+    display: grid;
+    place-items: center;
+    inline-size: 100%;
+    background:
+      repeating-linear-gradient(
+        -45deg,
+        var(--color-fg-10) 0 1px,
+        transparent 1px 10px
+      ),
+      var(--color-fg-10);
+    color: var(--color-fg-50);
+    border-radius: inherit;
+  }
+
+  .ph__label {
+    font-size: var(--text-meta);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.5rem;
+  }
+</style>

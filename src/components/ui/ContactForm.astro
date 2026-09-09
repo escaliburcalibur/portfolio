@@ -1,0 +1,136 @@
+---
+import { getSettings } from '@lib/content';
+
+const settings = await getSettings();
+const formspreeId =
+  settings.formspreeId || import.meta.env.PUBLIC_FORMSPREE_ID || '';
+const action = formspreeId
+  ? `https://formspree.io/f/${formspreeId}`
+  : `mailto:${settings.email}`;
+const isMailto = !formspreeId;
+---
+
+<form
+  class="contact"
+  action={action}
+  method={isMailto ? 'get' : 'POST'}
+  data-contact
+>
+  <div class="contact__field">
+    <label for="contact-name">Nombre</label>
+    <input
+      id="contact-name"
+      name="name"
+      type="text"
+      autocomplete="name"
+      required
+    />
+  </div>
+  <div class="contact__field">
+    <label for="contact-email">Email</label>
+    <input
+      id="contact-email"
+      name="email"
+      type="email"
+      autocomplete="email"
+      required
+    />
+  </div>
+  <div class="contact__field">
+    <label for="contact-message">¿En qué estás trabajando?</label>
+    <textarea id="contact-message" name="message" rows="4" required></textarea>
+  </div>
+  {/* honeypot anti-spam */}
+  <p class="contact__gotcha" aria-hidden="true">
+    <label for="contact-company">No rellenar</label>
+    <input
+      id="contact-company"
+      name="_gotcha"
+      type="text"
+      tabindex="-1"
+      autocomplete="off"
+    />
+  </p>
+  <button type="submit" class="btn-text contact__submit" data-fx
+    >Enviar ↗</button
+  >
+  <p
+    class="contact__status"
+    data-contact-status
+    role="status"
+    aria-live="polite"
+  >
+  </p>
+</form>
+
+<style>
+  .contact {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pd);
+  }
+  .contact__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .contact__field label {
+    font-size: var(--text-meta);
+    color: var(--color-fg-50);
+  }
+  .contact__field input,
+  .contact__field textarea {
+    background: var(--color-card);
+    border: 1px solid var(--color-line);
+    border-radius: var(--br-2);
+    padding: 0.6rem 0.75rem;
+    font-size: var(--text-small);
+    resize: vertical;
+  }
+  .contact__gotcha {
+    position: absolute;
+    left: -9999px;
+  }
+  .contact__submit {
+    align-self: flex-start;
+  }
+  .contact__status:empty {
+    display: none;
+  }
+  .contact__status {
+    font-size: var(--text-meta);
+    color: var(--color-fg-50);
+  }
+</style>
+
+<script>
+  function initContact() {
+    const form = document.querySelector<HTMLFormElement>('[data-contact]');
+    if (!form || form.dataset.wired || form.method.toLowerCase() === 'get')
+      return;
+    form.dataset.wired = '1';
+    const status = form.querySelector<HTMLElement>('[data-contact-status]');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (status) status.textContent = 'Enviando…';
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+        if (res.ok) {
+          form.reset();
+          if (status) status.textContent = 'Gracias, te escribo pronto.';
+        } else {
+          if (status)
+            status.textContent = 'No se pudo enviar. Prueba por email.';
+        }
+      } catch {
+        if (status) status.textContent = 'No se pudo enviar. Prueba por email.';
+      }
+    });
+  }
+  document.addEventListener('astro:page-load', initContact);
+</script>

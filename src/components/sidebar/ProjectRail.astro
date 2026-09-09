@@ -1,0 +1,47 @@
+---
+import RailCard from '@components/sidebar/RailCard.astro';
+import { getProjects } from '@lib/content';
+
+const projects = await getProjects();
+---
+
+<nav class="rail" aria-label="Proyectos">
+  <p class="rail__heading eyebrow" data-fx>Proyectos</p>
+  <ul role="list" class="rail__list">
+    {
+      projects.map((project, i) => (
+        <li>
+          <RailCard project={project} index={i + 1} />
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style>
+  .rail {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pd-2);
+  }
+  .rail__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pd-3);
+  }
+</style>
+
+<script>
+  // Marca la project card activa según la URL actual.
+  function markActive() {
+    const path = location.pathname.replace(/\/$/, '');
+    document.querySelectorAll<HTMLElement>('[data-rail-card]').forEach((el) => {
+      const href = el.getAttribute('href')?.replace(/\/$/, '');
+      el.setAttribute(
+        'aria-current',
+        href && path.endsWith(href) ? 'true' : 'false',
+      );
+    });
+  }
+  document.addEventListener('astro:page-load', markActive);
+</script>

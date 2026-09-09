@@ -1,0 +1,24 @@
+{
+  "name": "Branding",
+  "order": 1,
+  "hero": "Identidades visuales que hacen que una marca se reconozca en cualquier soporte.",
+  "pitch": "Texto de relleno. Aquí va la descripción del enfoque de branding: sistemas de identidad, logotipo, tipografía, color y aplicaciones, pensados para durar y para escalar.",
+  "keywords": [
+    "estudio de branding",
+    "diseño de identidad visual",
+    "branding para empresas",
+    "brand identity design"
+  ],
+  "faq": [
+    {
+      "q": "¿Cuánto cuesta una identidad de marca?",
+      "a": "Texto de relleno con el rango de precios y qué incluye cada nivel."
+    },
+    {
+      "q": "¿Cuánto se tarda en un proyecto de branding?",
+      "a": "Texto de relleno con la duración típica y las fases del proceso."
+    }
+  ],
+  "featuredProjects": ["proyecto-01", "proyecto-06"],
+  "seo": {}
+}

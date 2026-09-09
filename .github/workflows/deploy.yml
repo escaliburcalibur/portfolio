@@ -1,8 +1,9 @@
 name: Deploy to GitHub Pages
 
+# MANUAL por ahora: no se publica en ningún push. Para publicar, lanzar el
+# workflow a mano (pestaña Actions → "Deploy to GitHub Pages" → Run workflow),
+# o cambiar el trigger a `push: { branches: [main] }` cuando se quiera CD.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -10,7 +11,6 @@ permissions:
   pages: write
   id-token: write
 
-# One deploy at a time; don't cancel an in-progress production deploy.
 concurrency:
   group: pages
   cancel-in-progress: false
@@ -23,8 +23,6 @@ jobs:
 
       - name: Build with Astro
         uses: withastro/action@v3
-        with:
-          node-version: 22
         env:
           SITE_URL: ${{ vars.SITE_URL || 'https://escaliburcalibur.github.io' }}
           SITE_BASE: ${{ vars.SITE_BASE || '/portfolio' }}

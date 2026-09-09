@@ -1,0 +1,20 @@
+{
+  "name": "3D",
+  "order": 4,
+  "hero": "CGI y dirección de arte 3D para marcas, producto y campañas.",
+  "pitch": "Texto de relleno. Aquí va la descripción del trabajo 3D: render de producto, dirección de arte, texturas y piezas para redes y publicidad.",
+  "keywords": [
+    "diseño 3D",
+    "CGI para marcas",
+    "render de producto 3D",
+    "3d design studio"
+  ],
+  "faq": [
+    {
+      "q": "¿Trabajáis a partir de archivos CAD del producto?",
+      "a": "Texto de relleno sobre archivos de partida, modelado y aprobación."
+    }
+  ],
+  "featuredProjects": ["proyecto-04"],
+  "seo": {}
+}

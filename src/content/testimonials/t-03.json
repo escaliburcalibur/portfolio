@@ -1,0 +1,9 @@
+{
+  "quote": "Texto de relleno con una tercera cita, sobre el trabajo de UI/UX y el sistema de diseño.",
+  "author": "Nombre Apellido",
+  "role": "CTO",
+  "company": "Laboratorio Cinco",
+  "industry": "Salud",
+  "disciplineTags": ["ui-ux", "3d"],
+  "order": 3
+}

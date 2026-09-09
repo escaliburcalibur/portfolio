@@ -1,0 +1,77 @@
+---
+import { getCollection, render } from 'astro:content';
+import Shell from '@layouts/Shell.astro';
+import { withBase } from '@lib/url';
+import { breadcrumbLd, checkDescription, type PageSeo } from '@lib/seo';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('journal');
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+const dateLabel = d.date.toLocaleDateString('es-ES', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+
+const seo: PageSeo = {
+  title: d.title,
+  description: checkDescription(d.excerpt.slice(0, 160), `diario ${entry.id}`),
+  path: `/diario/${entry.id}`,
+  type: 'article',
+  jsonLd: [
+    breadcrumbLd([
+      { name: 'Inicio', path: '/' },
+      { name: 'Diario', path: '/diario' },
+      { name: d.title, path: `/diario/${entry.id}` },
+    ]),
+  ],
+};
+---
+
+<Shell {...seo}>
+  <article class="post">
+    <time class="post__date" datetime={d.date.toISOString()}>{dateLabel}</time>
+    <h1 class="page-title" data-fx data-reveal-text>{d.title}</h1>
+    <div class="prose post__body">
+      <Content />
+    </div>
+    {
+      d.project && (
+        <a
+          class="btn-text post__link"
+          href={withBase(`/${d.project.id}`)}
+          data-fx
+        >
+          Ver el proyecto ↗
+        </a>
+      )
+    }
+    <a class="btn-text post__back" href={withBase('/diario')} data-fx>
+      Todas las novedades
+    </a>
+  </article>
+
+  <style>
+    .post__date {
+      font-size: var(--text-meta);
+      color: var(--color-fg-50);
+    }
+    .post__body {
+      margin-block: var(--space-md);
+      max-width: 60ch;
+    }
+    .post__link,
+    .post__back {
+      display: inline-block;
+      margin-inline-end: var(--space-md);
+    }
+  </style>
+</Shell>

@@ -1,0 +1,59 @@
+---
+import Placeholder from '@components/Placeholder.astro';
+
+interface Props {
+  items?: { src?: string; alt?: string }[];
+  ratio?: string;
+}
+const { items = [], ratio = '3 / 2' } = Astro.props;
+---
+
+<div class="slice-gallery" data-speed="0.96" role="group" aria-label="Galería">
+  <div class="slice-gallery__track">
+    {
+      items.map((item) => (
+        <div class="slice-gallery__item" style={`aspect-ratio: ${ratio}`}>
+          {item.src ? (
+            <img
+              src={item.src}
+              alt={item.alt ?? ''}
+              loading="lazy"
+              decoding="async"
+            />
+          ) : (
+            <Placeholder ratio={ratio} label={item.alt || 'Imagen'} />
+          )}
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .slice-gallery {
+    margin-block: var(--pd-2);
+    overflow: hidden;
+  }
+  .slice-gallery__track {
+    display: flex;
+    gap: var(--pd-2);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    padding-block-end: var(--pd-3);
+  }
+  .slice-gallery__track::-webkit-scrollbar {
+    display: none;
+  }
+  .slice-gallery__item {
+    flex: 0 0 min(80%, 40rem);
+    scroll-snap-align: start;
+    border-radius: var(--br-2);
+    overflow: hidden;
+  }
+  img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+</style>

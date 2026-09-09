@@ -1,0 +1,83 @@
+---
+import Placeholder from '@components/Placeholder.astro';
+
+interface Props {
+  src?: string;
+  alt?: string;
+  ratio?: string;
+  orientation?: 'landscape' | 'portrait';
+  split?: boolean;
+  align?: 'full' | 'left' | 'right';
+  caption?: string;
+}
+const {
+  src,
+  alt = '',
+  ratio = '1496 / 998',
+  orientation = 'landscape',
+  split = false,
+  align = 'full',
+  caption,
+} = Astro.props;
+---
+
+<figure
+  class:list={['slice-media', `is-${align}`, { 'is-split': split }]}
+  data-orientation={orientation}
+  data-speed="0.94"
+>
+  <div class="slice-media__frame" style={`aspect-ratio: ${ratio}`}>
+    {
+      src ? (
+        <img src={src} alt={alt} loading="lazy" decoding="async" />
+      ) : (
+        <Placeholder ratio={ratio} label={alt || 'Media'} />
+      )
+    }
+  </div>
+  {caption && <figcaption class="slice-media__caption">{caption}</figcaption>}
+</figure>
+
+<style>
+  .slice-media {
+    margin-block: var(--pd-2);
+  }
+  /* full-bleed: se escapa del padding del panel de contenido */
+  .slice-media.is-full {
+    inline-size: 100vw;
+    margin-inline: calc(50% - 50vw);
+  }
+  .slice-media__frame {
+    inline-size: 100%;
+    overflow: hidden;
+  }
+  .slice-media.is-full .slice-media__frame {
+    border-radius: 0;
+  }
+  .slice-media:not(.is-full) .slice-media__frame {
+    border-radius: var(--br-2);
+  }
+  .slice-media__caption {
+    margin-block-start: 0.5rem;
+    padding-inline: var(--gutter);
+    font-size: var(--text-meta);
+    color: var(--color-fg-50);
+  }
+  @media (width >= 57rem) {
+    .slice-media.is-left .slice-media__frame {
+      inline-size: 62%;
+    }
+    .slice-media.is-right {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .slice-media.is-right .slice-media__frame {
+      inline-size: 62%;
+    }
+  }
+  img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+</style>

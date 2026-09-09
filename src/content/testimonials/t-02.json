@@ -1,0 +1,9 @@
+{
+  "quote": "Texto de relleno con una segunda cita, centrada en el proceso de motion y la entrega.",
+  "author": "Nombre Apellido",
+  "role": "Head of Product",
+  "company": "Estudio Dos",
+  "industry": "Tecnología",
+  "disciplineTags": ["motion", "web-design", "creative-dev"],
+  "order": 2
+}

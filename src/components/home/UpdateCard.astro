@@ -1,0 +1,70 @@
+---
+import Placeholder from '@components/Placeholder.astro';
+import { withBase } from '@lib/url';
+import type { JournalPost } from '@lib/content';
+
+interface Props {
+  entry: JournalPost;
+  withMedia?: boolean;
+}
+const { entry, withMedia = false } = Astro.props;
+const { title, date, excerpt, link } = entry.data;
+const href = link ?? withBase(`/diario/${entry.id}`);
+const external = Boolean(link);
+const dateLabel = date.toLocaleDateString('es-ES', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+---
+
+<article class="update" data-reveal>
+  <time class="update__date" datetime={date.toISOString()}>{dateLabel}</time>
+  <h2 class="update__title">
+    <a
+      href={href}
+      data-fx
+      {...external ? { target: '_blank', rel: 'noopener' } : {}}
+    >
+      {title}
+    </a>
+  </h2>
+  <p class="update__excerpt">{excerpt}</p>
+  {
+    withMedia && (
+      <div class="update__media">
+        <Placeholder ratio="4 / 3" />
+      </div>
+    )
+  }
+</article>
+
+<style>
+  .update {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    break-inside: avoid;
+    margin-block-end: var(--pd);
+    padding: var(--pd);
+    border-radius: var(--br-2);
+    background: var(--color-card);
+  }
+  .update__date {
+    font-size: var(--text-meta);
+    color: var(--color-fg-50);
+  }
+  .update__title {
+    font-size: var(--text-display);
+    font-weight: var(--weight-medium);
+  }
+  .update__excerpt {
+    font-size: var(--text-small);
+    color: var(--color-fg-70);
+  }
+  .update__media {
+    margin-block-start: 0.5rem;
+    border-radius: var(--br-2);
+    overflow: hidden;
+  }
+</style>

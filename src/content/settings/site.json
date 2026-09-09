@@ -1,0 +1,19 @@
+{
+  "wordmark": "David Bayón",
+  "email": "hola@ejemplo.com",
+  "location": "Madrid, España",
+  "availability": "Disponible para nuevos proyectos",
+  "formspreeId": "",
+  "socials": [
+    { "label": "Instagram", "href": "https://instagram.com/" },
+    { "label": "LinkedIn", "href": "https://linkedin.com/in/" },
+    { "label": "Behance", "href": "https://behance.net/" }
+  ],
+  "clients": [
+    "Cliente Uno",
+    "Estudio Dos",
+    "Grupo Tres",
+    "Marca Cuatro",
+    "Laboratorio Cinco"
+  ]
+}

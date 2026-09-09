@@ -1,0 +1,87 @@
+---
+// Toggle dark/light. Persiste en localStorage; respeta prefers-color-scheme
+// hasta que hay elección explícita. Se sincroniza en cada navegación.
+---
+
+<button
+  type="button"
+  class="theme-toggle"
+  data-theme-toggle
+  aria-pressed="false"
+  title="Cambiar tema"
+>
+  <span class="theme-toggle__track" aria-hidden="true">
+    <span class="theme-toggle__knob"></span>
+  </span>
+  <span class="theme-toggle__label btn-text" data-fx>Tema oscuro</span>
+</button>
+
+<style>
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .theme-toggle__track {
+    inline-size: 34px;
+    block-size: 18px;
+    border-radius: var(--br-pill);
+    border: 1px solid var(--color-line);
+    padding: 2px;
+    display: flex;
+    transition: background-color var(--dur) var(--ease);
+  }
+  .theme-toggle__knob {
+    inline-size: 12px;
+    block-size: 12px;
+    border-radius: 50%;
+    background: var(--color-fg);
+    transition: transform var(--dur) var(--ease);
+  }
+  :root[data-theme='light'] .theme-toggle__knob,
+  .theme-toggle[aria-pressed='true'] .theme-toggle__knob {
+    transform: translateX(16px);
+  }
+</style>
+
+<script>
+  function apply(theme: 'light' | 'dark') {
+    document.documentElement.dataset.theme = theme;
+    try {
+      localStorage.setItem('theme', theme);
+    } catch {
+      /* almacenamiento bloqueado */
+    }
+    document
+      .querySelectorAll<HTMLButtonElement>('[data-theme-toggle]')
+      .forEach((b) => {
+        b.setAttribute('aria-pressed', String(theme === 'light'));
+        const label = b.querySelector('.theme-toggle__label');
+        if (label)
+          label.textContent = theme === 'light' ? 'Tema claro' : 'Tema oscuro';
+      });
+  }
+
+  function current(): 'light' | 'dark' {
+    const set = document.documentElement.dataset.theme;
+    if (set === 'light' || set === 'dark') return set;
+    return window.matchMedia('(prefers-color-scheme: light)').matches
+      ? 'light'
+      : 'dark';
+  }
+
+  function wire() {
+    apply(current());
+    document
+      .querySelectorAll<HTMLButtonElement>('[data-theme-toggle]')
+      .forEach((b) => {
+        if (b.dataset.wired) return;
+        b.dataset.wired = '1';
+        b.addEventListener('click', () =>
+          apply(current() === 'light' ? 'dark' : 'light'),
+        );
+      });
+  }
+
+  document.addEventListener('astro:page-load', wire);
+</script>

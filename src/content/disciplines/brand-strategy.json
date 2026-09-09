@@ -1,0 +1,20 @@
+{
+  "name": "Estrategia de marca",
+  "order": 2,
+  "hero": "El posicionamiento, el mensaje y la arquitectura antes de dibujar nada.",
+  "pitch": "Texto de relleno. Aquí va la descripción del trabajo de estrategia: investigación, posicionamiento, propuesta de valor, arquitectura de marca y territorio verbal.",
+  "keywords": [
+    "estrategia de marca",
+    "consultoría de marca",
+    "posicionamiento de marca",
+    "brand strategy studio"
+  ],
+  "faq": [
+    {
+      "q": "¿Qué entregables incluye un proyecto de estrategia?",
+      "a": "Texto de relleno: plataforma de marca, mensajes clave, arquitectura y guía de tono."
+    }
+  ],
+  "featuredProjects": ["proyecto-06"],
+  "seo": {}
+}

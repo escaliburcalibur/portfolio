@@ -1,0 +1,61 @@
+---
+interface Props {
+  heading?: string;
+  body: string;
+  variant?: 'default' | 'two-col' | 'featured';
+}
+const { heading, body, variant = 'default' } = Astro.props;
+---
+
+<div
+  class:list={['slice-text', `slice-text--${variant}`]}
+  data-reveal
+  data-variant={variant}
+>
+  <div class="slice-text__inner">
+    {
+      heading && (
+        <h2 class="slice-text__heading" data-fx>
+          {heading}
+        </h2>
+      )
+    }
+    <p class="slice-text__body">{body}</p>
+  </div>
+</div>
+
+<style>
+  .slice-text {
+    padding-block: var(--space-lg);
+  }
+  .slice-text__inner {
+    inline-size: min(100%, 52ch);
+    margin-inline: auto;
+  }
+  .slice-text__heading {
+    font-size: var(--text-display);
+    color: var(--color-fg-50);
+    margin-block-end: var(--pd-2);
+  }
+  .slice-text__body {
+    font-size: var(--text-body);
+  }
+  .slice-text--two-col .slice-text__inner {
+    inline-size: min(100%, 74ch);
+  }
+  @media (width >= 48rem) {
+    .slice-text--two-col .slice-text__body {
+      columns: 2;
+      column-gap: var(--space-lg);
+    }
+  }
+  .slice-text--featured {
+    min-block-size: 60svh;
+    display: grid;
+    place-items: center;
+    text-align: center;
+  }
+  .slice-text--featured .slice-text__body {
+    font-size: var(--text-display);
+  }
+</style>

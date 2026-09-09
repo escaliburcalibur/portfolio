@@ -1,0 +1,152 @@
+---
+import { getCollection, render } from 'astro:content';
+import Shell from '@layouts/Shell.astro';
+import SliceMedia from '@components/project/SliceMedia.astro';
+import SliceGallery from '@components/project/SliceGallery.astro';
+import SliceText from '@components/project/SliceText.astro';
+import SliceStat from '@components/project/SliceStat.astro';
+import ProjectInfo from '@components/project/ProjectInfo.astro';
+import { withBase } from '@lib/url';
+import { getRelatedProjects, disciplineLabel } from '@lib/content';
+import {
+  breadcrumbLd,
+  canonical,
+  absoluteUrl,
+  checkDescription,
+  SITE,
+  DISCIPLINE_LABELS,
+  type PageSeo,
+} from '@lib/seo';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const d = project.data;
+const related = await getRelatedProjects(project, 3);
+
+const description =
+  d.seo?.metaDescription ??
+  checkDescription(
+    `${d.title} — ${d.railDescription} ${d.client}, ${d.year}.`.slice(0, 160),
+    `proyecto ${project.id}`,
+  );
+
+const seo: PageSeo = {
+  title: d.seo?.metaTitle ?? d.title,
+  description,
+  path: `/${project.id}`,
+  type: 'article',
+  ogImage: d.seo?.ogImage ?? d.cover,
+  jsonLd: [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'CreativeWork',
+      name: d.title,
+      creator: {
+        '@type': 'Person',
+        name: 'David Bayón',
+        url: `${SITE.url}/sobre-mi`,
+      },
+      about: d.disciplines.map((id) => DISCIPLINE_LABELS[id]),
+      keywords: d.disciplines.map((id) => DISCIPLINE_LABELS[id]).join(', '),
+      dateCreated: String(d.year),
+      ...(d.cover ? { image: absoluteUrl(d.cover) } : {}),
+      url: canonical(`/${project.id}`),
+    },
+    breadcrumbLd([
+      { name: 'Inicio', path: '/' },
+      { name: 'Proyectos', path: '/proyectos' },
+      { name: d.title, path: `/${project.id}` },
+    ]),
+  ],
+};
+---
+
+<Shell {...seo}>
+  <article class="project">
+    <h1 class="sr-only">{d.title}</h1>
+
+    <div class="project__stream">
+      {
+        d.slices.map((slice) => {
+          if (slice.type === 'media') return <SliceMedia {...slice} />;
+          if (slice.type === 'gallery') return <SliceGallery {...slice} />;
+          if (slice.type === 'text') return <SliceText {...slice} />;
+          if (slice.type === 'stat') return <SliceStat {...slice} />;
+          return null;
+        })
+      }
+    </div>
+
+    <p class="project__disciplines">
+      {
+        d.disciplines.map((id) => (
+          <a href={withBase(`/servicios/${id}`)} data-fx>
+            {disciplineLabel(id)}
+          </a>
+        ))
+      }
+    </p>
+
+    <ProjectInfo
+      credits={d.credits}
+      fonts={d.fonts}
+      imagesDownloadUrl={d.imagesDownloadUrl}
+    >
+      <Content />
+    </ProjectInfo>
+
+    {
+      related.length > 0 && (
+        <section class="project__related" aria-label="Proyectos relacionados">
+          <h2 class="eyebrow" data-fx>
+            Proyectos relacionados
+          </h2>
+          <ul role="list">
+            {related.map((r) => (
+              <li>
+                <a href={withBase(`/${r.id}`)} data-fx>
+                  {r.data.title}
+                </a>
+                <span> — {r.data.railDescription}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </article>
+
+  <style>
+    .project__disciplines {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--pd);
+      margin-block-start: var(--space-lg);
+      font-size: var(--text-small);
+    }
+    .project__disciplines a {
+      color: var(--color-accent);
+    }
+    .project__related {
+      margin-block-start: var(--space-xl);
+    }
+    .project__related ul {
+      margin-block-start: var(--pd);
+      display: flex;
+      flex-direction: column;
+      gap: var(--pd-2);
+      font-size: var(--text-small);
+    }
+    .project__related span {
+      color: var(--color-fg-50);
+    }
+  </style>
+</Shell>

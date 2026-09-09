@@ -1,0 +1,20 @@
+{
+  "name": "Desarrollo creativo",
+  "order": 7,
+  "hero": "Webs con animación y experiencias interactivas, cuidando el rendimiento.",
+  "pitch": "Texto de relleno. Aquí va la descripción del trabajo de desarrollo creativo: animación con GSAP, WebGL, experiencias interactivas y front-end de portfolios.",
+  "keywords": [
+    "creative developer",
+    "desarrollo web creativo",
+    "web con GSAP",
+    "webgl agency"
+  ],
+  "faq": [
+    {
+      "q": "¿El rendimiento sufre con tanta animación?",
+      "a": "Texto de relleno sobre presupuesto de rendimiento y prefers-reduced-motion."
+    }
+  ],
+  "featuredProjects": ["proyecto-03"],
+  "seo": {}
+}

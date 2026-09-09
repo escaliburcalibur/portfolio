@@ -1,54 +1,115 @@
 ---
 import Wordmark from '@components/sidebar/Wordmark.astro';
+import ThemeToggle from '@components/sidebar/ThemeToggle.astro';
+import GalleryToggle from '@components/sidebar/GalleryToggle.astro';
+import ProjectRail from '@components/sidebar/ProjectRail.astro';
 import { withBase } from '@lib/url';
-
-// Milestone 1: sidebar mínima (wordmark + enlaces básicos).
-// El ProjectRail, ThemeToggle, GalleryToggle y el overlay móvil llegan en M2.
-const nav = [
-  { href: '/proyectos', label: 'Proyectos' },
-  { href: '/sobre-mi', label: 'Sobre mí' },
-  { href: '/diario', label: 'Diario' },
-];
 ---
 
 <header class="sidebar" data-sidebar>
-  <div class="sidebar__inner">
+  {
+    /* Barra superior (visible en ≤656px como sticky; en escritorio es el bloque de cabecera) */
+  }
+  <div class="sidebar__bar">
+    <button
+      type="button"
+      class="sidebar__toggle btn-text"
+      data-menu-toggle
+      aria-expanded="false"
+      aria-controls="sidebar-panel"
+      data-fx
+    >
+      Menú
+    </button>
     <Wordmark />
-    <nav class="sidebar__nav" aria-label="Principal">
-      <ul role="list">
-        {
-          nav.map((item) => (
-            <li>
-              <a class="btn-text" href={withBase(item.href)} data-fx>
-                {item.label}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </nav>
+    <div class="sidebar__bar-actions">
+      <a class="btn-text sidebar__all" href={withBase('/proyectos')} data-fx
+        >Ver todo</a
+      >
+      <ThemeToggle />
+    </div>
+  </div>
+
+  {/* Panel: en escritorio siempre visible; en móvil overlay */}
+  <div class="sidebar__panel" id="sidebar-panel" data-menu-panel>
+    <div class="sidebar__controls">
+      <GalleryToggle />
+    </div>
+
+    <div class="sidebar__clock" data-clock hidden>
+      {/* Reloj en vivo — aplazado; el hueco queda maquetado. */}
+    </div>
+
+    <a class="sidebar__about" href={withBase('/sobre-mi')} data-fx>Sobre mí</a>
+
+    <ProjectRail />
   </div>
 </header>
 
 <style>
   .sidebar {
     flex: 0 0 auto;
+    background: var(--color-bg);
+  }
+
+  .sidebar__bar {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--pd);
+    padding: var(--gutter);
     border-block-end: 1px solid var(--color-line);
   }
-
-  .sidebar__inner {
+  .sidebar__bar :global(.wordmark) {
+    text-align: center;
+  }
+  .sidebar__bar-actions {
     display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--pd) var(--space-md);
+    align-items: center;
+    gap: var(--pd);
+  }
+
+  .sidebar__panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pd);
     padding: var(--gutter);
   }
-
-  .sidebar__nav ul {
+  .sidebar__controls {
     display: flex;
-    gap: var(--space-md);
+    gap: var(--pd);
+  }
+  .sidebar__about {
+    font-size: var(--text-small);
+    font-weight: var(--weight-medium);
+    padding-block: var(--pd-2);
+    border-block: 1px solid var(--color-line);
   }
 
+  /* ── Móvil (≤656px): panel como overlay ── */
+  @media (width < 41rem) {
+    .sidebar__bar {
+      position: sticky;
+      inset-block-start: 0;
+      z-index: 50;
+      background: var(--color-bg);
+    }
+    .sidebar__panel {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      overflow-y: auto;
+      background: var(--color-bg);
+      transform: translateY(-100%);
+      transition: transform var(--dur) var(--ease);
+      padding-block-start: calc(var(--gutter) * 2 + 2rem);
+    }
+    .sidebar[data-open='true'] .sidebar__panel {
+      transform: translateY(0);
+    }
+  }
+
+  /* ── Escritorio (≥656px): rail fijo ── */
   @media (width >= 41rem) {
     .sidebar {
       position: sticky;
@@ -56,18 +117,61 @@ const nav = [
       inline-size: var(--rail);
       block-size: 100svh;
       overflow-y: auto;
-      border-block-end: 0;
       border-inline-end: 1px solid var(--color-line);
     }
-
-    .sidebar__inner {
-      flex-direction: column;
-      block-size: 100%;
+    .sidebar__toggle {
+      display: none;
     }
-
-    .sidebar__nav ul {
+    .sidebar__bar {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      gap: var(--pd-2);
+      text-align: center;
+    }
+    .sidebar__bar-actions {
       flex-direction: column;
-      gap: var(--space-2xs);
+      gap: var(--pd-2);
+    }
+    .sidebar__all {
+      display: none;
     }
   }
 </style>
+
+<script>
+  function wire() {
+    const sidebar = document.querySelector<HTMLElement>('[data-sidebar]');
+    const toggle =
+      document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+    if (!sidebar || !toggle || toggle.dataset.wired) return;
+    toggle.dataset.wired = '1';
+
+    const setOpen = (open: boolean) => {
+      sidebar.dataset.open = String(open);
+      toggle.setAttribute('aria-expanded', String(open));
+      document.body.style.overflow = open ? 'hidden' : '';
+      toggle.textContent = open ? 'Cerrar' : 'Menú';
+    };
+
+    toggle.addEventListener('click', () =>
+      setOpen(sidebar.dataset.open !== 'true'),
+    );
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && sidebar.dataset.open === 'true') setOpen(false);
+    });
+    sidebar
+      .querySelector('[data-menu-panel]')
+      ?.addEventListener('click', (e) => {
+        if ((e.target as HTMLElement).closest('a')) setOpen(false);
+      });
+  }
+  document.addEventListener('astro:page-load', wire);
+  // El panel puede persistir entre navegaciones (transition:persist); re-cierra.
+  document.addEventListener('astro:after-swap', () => {
+    const s = document.querySelector<HTMLElement>('[data-sidebar]');
+    if (s) {
+      s.dataset.open = 'false';
+      document.body.style.overflow = '';
+    }
+  });
+</script>

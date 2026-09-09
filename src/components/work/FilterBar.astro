@@ -1,0 +1,72 @@
+---
+import { DISCIPLINES } from '@lib/seo';
+import { disciplineLabel } from '@lib/content';
+
+const options = [
+  { id: 'all', label: 'Todos' },
+  ...DISCIPLINES.map((d) => ({ id: d, label: disciplineLabel(d) })),
+];
+---
+
+<div class="filter-bar" role="group" aria-label="Filtrar por disciplina">
+  {
+    options.map((opt) => (
+      <button
+        type="button"
+        class="filter-bar__btn btn-text"
+        data-filter-btn
+        data-filter={opt.id}
+        aria-pressed={opt.id === 'all' ? 'true' : 'false'}
+        data-fx
+      >
+        {opt.label}
+      </button>
+    ))
+  }
+</div>
+
+<style>
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--pd);
+    margin-block: var(--space-md);
+  }
+</style>
+
+<script>
+  function initFilter() {
+    const bar = document.querySelector<HTMLElement>('.filter-bar');
+    if (!bar || bar.dataset.wired) return;
+    bar.dataset.wired = '1';
+    const btns = [
+      ...bar.querySelectorAll<HTMLButtonElement>('[data-filter-btn]'),
+    ];
+    const cards = [
+      ...document.querySelectorAll<HTMLElement>('[data-work-card]'),
+    ];
+
+    const apply = (filter: string) => {
+      btns.forEach((b) =>
+        b.setAttribute('aria-pressed', String(b.dataset.filter === filter)),
+      );
+      cards.forEach((c) => {
+        const list = (c.dataset.disciplines ?? '').split(' ');
+        c.hidden = filter !== 'all' && !list.includes(filter);
+      });
+      const url = new URL(location.href);
+      if (filter === 'all') url.searchParams.delete('filtro');
+      else url.searchParams.set('filtro', filter);
+      history.replaceState(null, '', url);
+    };
+
+    btns.forEach((b) =>
+      b.addEventListener('click', () => apply(b.dataset.filter ?? 'all')),
+    );
+
+    const initial = new URL(location.href).searchParams.get('filtro');
+    if (initial && btns.some((b) => b.dataset.filter === initial))
+      apply(initial);
+  }
+  document.addEventListener('astro:page-load', initFilter);
+</script>

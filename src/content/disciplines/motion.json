@@ -1,0 +1,20 @@
+{
+  "name": "Motion",
+  "order": 3,
+  "hero": "Marcas en movimiento: sistemas de animación coherentes con la identidad.",
+  "pitch": "Texto de relleno. Aquí va la descripción del trabajo de motion: identidad en movimiento, piezas para lanzamiento, animación de logo y contenido para redes.",
+  "keywords": [
+    "motion design",
+    "estudio de animación",
+    "motion graphics",
+    "brand in motion"
+  ],
+  "faq": [
+    {
+      "q": "¿En qué formatos entregáis las piezas de motion?",
+      "a": "Texto de relleno con formatos, resoluciones y adaptaciones por canal."
+    }
+  ],
+  "featuredProjects": ["proyecto-02"],
+  "seo": {}
+}

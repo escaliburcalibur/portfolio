@@ -1,0 +1,20 @@
+{
+  "name": "Diseño web",
+  "order": 5,
+  "hero": "Sitios editoriales y de producto, rápidos y con carácter.",
+  "pitch": "Texto de relleno. Aquí va la descripción del trabajo de diseño web: arquitectura, sistema visual, maquetación responsive y prototipos navegables.",
+  "keywords": [
+    "diseño web",
+    "estudio de diseño web",
+    "diseño de páginas web premium",
+    "web design agency"
+  ],
+  "faq": [
+    {
+      "q": "¿Entregáis el sitio desarrollado o solo el diseño?",
+      "a": "Texto de relleno sobre alcance: diseño, desarrollo y puesta en producción."
+    }
+  ],
+  "featuredProjects": ["proyecto-03"],
+  "seo": {}
+}

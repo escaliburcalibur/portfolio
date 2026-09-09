@@ -1,0 +1,82 @@
+---
+import Credits from '@components/project/Credits.astro';
+
+interface CreditGroup {
+  org: string;
+  lines: { role: string; name: string }[];
+}
+interface Props {
+  credits: CreditGroup[];
+  fonts: string[];
+  imagesDownloadUrl?: string;
+}
+const { credits, fonts, imagesDownloadUrl } = Astro.props;
+---
+
+<section class="project-info" data-reveal aria-label="Información del proyecto">
+  <div class="project-info__left">
+    <h2 class="project-info__heading eyebrow" data-fx>
+      Información del proyecto
+    </h2>
+    <div class="prose">
+      <slot />
+    </div>
+  </div>
+  <div class="project-info__right">
+    {credits.length > 0 && <Credits credits={credits} />}
+    {
+      fonts.length > 0 && (
+        <div class="project-info__block">
+          <h2 class="eyebrow" data-fx>
+            Tipografías
+          </h2>
+          <ul role="list" class="project-info__fonts">
+            {fonts.map((f) => (
+              <li>{f}</li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+    {
+      imagesDownloadUrl && (
+        <a
+          class="project-info__download btn-text"
+          href={imagesDownloadUrl}
+          data-fx
+          target="_blank"
+          rel="noopener"
+        >
+          Descargar imágenes del proyecto ↗
+        </a>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .project-info {
+    margin-block-start: var(--space-2xl);
+    padding-block-start: var(--space-lg);
+    border-block-start: 1px solid var(--color-line);
+    display: grid;
+    gap: var(--space-lg);
+  }
+  @media (width >= 57rem) {
+    .project-info {
+      grid-template-columns: 1.4fr 1fr;
+    }
+  }
+  .project-info__right {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+  .project-info__fonts {
+    font-size: var(--text-small);
+    margin-block-start: var(--pd-2);
+  }
+  .project-info__fonts li {
+    padding-block: 0.15rem;
+  }
+</style>

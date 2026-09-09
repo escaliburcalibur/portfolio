@@ -1,0 +1,40 @@
+---
+import UpdateCard from '@components/home/UpdateCard.astro';
+import { getJournal } from '@lib/content';
+
+const entries = await getJournal();
+---
+
+<section class="updates" aria-label="Novedades del estudio">
+  <h2 class="updates__heading eyebrow" data-fx>Novedades</h2>
+  <div class="updates__grid">
+    {
+      entries.map((entry, i) => (
+        <UpdateCard entry={entry} withMedia={i % 2 === 1} />
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .updates {
+    margin-block-start: var(--space-xl);
+  }
+  .updates__heading {
+    margin-block-end: var(--pd);
+  }
+  .updates__grid {
+    column-count: 1;
+    column-gap: var(--pd-2);
+  }
+  @media (width >= 64rem) {
+    .updates__grid {
+      column-count: 2;
+    }
+  }
+  @media (width >= 80rem) {
+    .updates__grid {
+      column-count: 3;
+    }
+  }
+</style>

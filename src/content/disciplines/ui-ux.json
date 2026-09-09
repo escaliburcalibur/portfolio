@@ -1,0 +1,20 @@
+{
+  "name": "UI/UX",
+  "order": 6,
+  "hero": "Producto digital: flujos claros, sistemas de diseño y detalle de interfaz.",
+  "pitch": "Texto de relleno. Aquí va la descripción del trabajo de UI/UX: investigación, arquitectura de información, wireframes, design system y diseño de interfaz.",
+  "keywords": [
+    "diseño UI UX",
+    "diseño de producto digital",
+    "diseño de interfaces",
+    "ux design studio"
+  ],
+  "faq": [
+    {
+      "q": "¿Hacéis también auditoría UX de un producto existente?",
+      "a": "Texto de relleno sobre el proceso de auditoría y entregables."
+    }
+  ],
+  "featuredProjects": ["proyecto-05"],
+  "seo": {}
+}

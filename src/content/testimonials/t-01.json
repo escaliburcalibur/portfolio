@@ -1,0 +1,9 @@
+{
+  "quote": "Texto de relleno con una cita de un cliente sobre cómo fue trabajar en el proyecto y el resultado.",
+  "author": "Nombre Apellido",
+  "role": "Directora de marca",
+  "company": "Cliente Uno",
+  "industry": "Cultura",
+  "disciplineTags": ["branding", "brand-strategy"],
+  "order": 1
+}

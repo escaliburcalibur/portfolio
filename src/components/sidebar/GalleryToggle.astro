@@ -1,0 +1,35 @@
+---
+// Activa el "modo galería": el HeroSwap de la home auto-cicla las imágenes.
+// El HeroSwap escucha el evento `gallery-toggle`.
+---
+
+<button
+  type="button"
+  class="gallery-toggle btn-text"
+  data-gallery-toggle
+  aria-pressed="false"
+  data-fx
+>
+  Modo galería
+</button>
+
+<script>
+  function wire() {
+    document
+      .querySelectorAll<HTMLButtonElement>('[data-gallery-toggle]')
+      .forEach((b) => {
+        if (b.dataset.wired) return;
+        b.dataset.wired = '1';
+        b.addEventListener('click', () => {
+          const on = b.getAttribute('aria-pressed') !== 'true';
+          document
+            .querySelectorAll('[data-gallery-toggle]')
+            .forEach((x) => x.setAttribute('aria-pressed', String(on)));
+          window.dispatchEvent(
+            new CustomEvent('gallery-toggle', { detail: { on } }),
+          );
+        });
+      });
+  }
+  document.addEventListener('astro:page-load', wire);
+</script>

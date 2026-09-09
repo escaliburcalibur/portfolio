@@ -1,0 +1,188 @@
+---
+import { getCollection } from 'astro:content';
+import Shell from '@layouts/Shell.astro';
+import WorkCard from '@components/work/WorkCard.astro';
+import { withBase } from '@lib/url';
+import {
+  getProjectsByDiscipline,
+  getTestimonialsByDiscipline,
+  disciplineLabel,
+} from '@lib/content';
+import {
+  breadcrumbLd,
+  checkDescription,
+  DISCIPLINES,
+  type PageSeo,
+} from '@lib/seo';
+
+export async function getStaticPaths() {
+  const disciplines = await getCollection('disciplines');
+  return disciplines.map((entry) => ({
+    params: { disciplina: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const id = entry.id as (typeof DISCIPLINES)[number];
+const d = entry.data;
+const projects = await getProjectsByDiscipline(id);
+const testimonials = await getTestimonialsByDiscipline(id);
+const headTerm = d.keywords[0] ?? d.name;
+
+const seo: PageSeo = {
+  title: d.seo?.metaTitle ?? `${d.name} — ${headTerm}`,
+  description: checkDescription(
+    d.seo?.metaDescription ?? `${d.pitch}`.slice(0, 155),
+    `servicio ${id}`,
+  ),
+  path: `/servicios/${id}`,
+  jsonLd: [
+    breadcrumbLd([
+      { name: 'Inicio', path: '/' },
+      { name: 'Servicios', path: '/sobre-mi' },
+      { name: d.name, path: `/servicios/${id}` },
+    ]),
+    ...(d.faq.length > 0
+      ? [
+          {
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: d.faq.map((f) => ({
+              '@type': 'Question',
+              name: f.q,
+              acceptedAnswer: { '@type': 'Answer', text: f.a },
+            })),
+          },
+        ]
+      : []),
+  ],
+};
+---
+
+<Shell {...seo}>
+  <p class="eyebrow service__eyebrow" data-fx>Servicio</p>
+  <h1 class="page-title" data-fx data-reveal-text>{d.name}</h1>
+  <p class="service__hero" data-reveal-text>{d.hero}</p>
+  <p class="prose service__pitch">{d.pitch}</p>
+
+  <section class="service__block" aria-label={`Trabajo de ${d.name}`}>
+    <h2 class="service__block-title eyebrow" data-fx>Trabajo seleccionado</h2>
+    {
+      projects.length > 0 ? (
+        <ul role="list" class="service__grid">
+          {projects.map((p) => (
+            <li>
+              <WorkCard project={p} />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="service__empty">
+          Aún no hay proyectos publicados en esta disciplina.
+        </p>
+      )
+    }
+  </section>
+
+  {
+    d.faq.length > 0 && (
+      <section class="service__block" aria-label="Preguntas frecuentes">
+        <h2 class="service__block-title eyebrow" data-fx>
+          Preguntas frecuentes
+        </h2>
+        <dl class="service__faq">
+          {d.faq.map((f) => (
+            <div>
+              <dt>{f.q}</dt>
+              <dd>{f.a}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+    )
+  }
+
+  {
+    testimonials.length > 0 && (
+      <section class="service__block" aria-label="Testimonios">
+        <h2 class="service__block-title eyebrow" data-fx>
+          Testimonios
+        </h2>
+        <ul role="list" class="service__words">
+          {testimonials.map((t) => (
+            <li>
+              <blockquote>{t.data.quote}</blockquote>
+              <p>
+                {t.data.author} — {t.data.role}, {t.data.company}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <p class="service__cta-wrap">
+    <a
+      class="btn-text service__cta"
+      href={withBase(`/proyectos?filtro=${id}`)}
+      data-fx
+    >
+      Ver todo el trabajo de {disciplineLabel(id).toLowerCase()} ↗
+    </a>
+  </p>
+
+  <style>
+    .service__hero {
+      font-size: var(--text-display);
+      max-width: 40ch;
+      margin-block: var(--pd);
+    }
+    .service__pitch {
+      max-width: 60ch;
+    }
+    .service__block {
+      margin-block-start: var(--space-xl);
+    }
+    .service__block-title {
+      margin-block-end: var(--pd);
+    }
+    .service__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--pd);
+    }
+    @media (width < 48rem) {
+      .service__grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    .service__faq div {
+      padding-block: var(--pd);
+      border-block-end: 1px solid var(--color-line);
+      font-size: var(--text-small);
+    }
+    .service__faq dt {
+      font-weight: var(--weight-medium);
+      margin-block-end: 0.25rem;
+    }
+    .service__faq dd {
+      color: var(--color-fg-70);
+    }
+    .service__words {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      font-size: var(--text-small);
+    }
+    .service__words p {
+      margin-block-start: 0.35rem;
+      font-size: var(--text-meta);
+      color: var(--color-fg-50);
+    }
+    .service__cta-wrap {
+      margin-block-start: var(--space-xl);
+    }
+  </style>
+</Shell>

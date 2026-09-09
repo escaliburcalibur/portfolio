@@ -1,0 +1,75 @@
+---
+import Placeholder from '@components/Placeholder.astro';
+import { withBase } from '@lib/url';
+import type { Project } from '@lib/content';
+
+interface Props {
+  project: Project;
+  index: number;
+}
+const { project, index } = Astro.props;
+const { title, railDescription } = project.data;
+---
+
+<a
+  class="rail-card"
+  href={withBase(`/${project.id}`)}
+  data-rail-card
+  data-slug={project.id}
+>
+  <span class="rail-card__thumb" aria-hidden="true">
+    <Placeholder ratio="1 / 1" />
+  </span>
+  <span class="rail-card__body">
+    <span class="rail-card__title" data-fx>{title}</span>
+    <span class="rail-card__desc">{railDescription}</span>
+  </span>
+  <span class="rail-card__index">{String(index).padStart(2, '0')}</span>
+</a>
+
+<style>
+  .rail-card {
+    display: grid;
+    grid-template-columns: 3.25rem 1fr auto;
+    gap: 0.75rem;
+    align-items: start;
+    padding: var(--pd-2);
+    border-radius: var(--br-nav);
+    background: var(--color-card);
+    transition: background-color var(--dur) var(--ease);
+  }
+  .rail-card:hover,
+  .rail-card[aria-current='true'] {
+    background: var(--color-fg-10);
+  }
+  .rail-card__thumb {
+    display: block;
+    inline-size: 3.25rem;
+    border-radius: var(--br-2);
+    overflow: hidden;
+  }
+  .rail-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+  .rail-card__title {
+    font-size: var(--text-small);
+    font-weight: var(--weight-medium);
+  }
+  .rail-card__desc {
+    font-size: var(--text-meta);
+    color: var(--color-fg-50);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .rail-card__index {
+    font-size: var(--text-meta);
+    color: var(--color-fg-30);
+    font-family: var(--font-mono);
+  }
+</style>

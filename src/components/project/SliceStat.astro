@@ -1,0 +1,29 @@
+---
+interface Props {
+  value: string;
+  caption: string;
+}
+const { value, caption } = Astro.props;
+---
+
+<div class="slice-stat" data-reveal>
+  <p class="slice-stat__value">{value}</p>
+  <p class="slice-stat__caption">{caption}</p>
+</div>
+
+<style>
+  .slice-stat {
+    padding-block: var(--space-lg);
+    text-align: center;
+  }
+  .slice-stat__value {
+    font-size: var(--text-display-lg);
+    font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-label);
+  }
+  .slice-stat__caption {
+    margin-block-start: 0.25rem;
+    font-size: var(--text-small);
+    color: var(--color-fg-50);
+  }
+</style>

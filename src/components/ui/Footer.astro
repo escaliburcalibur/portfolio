@@ -1,0 +1,65 @@
+---
+import { withBase } from '@lib/url';
+import { getSettings } from '@lib/content';
+
+const settings = await getSettings();
+const year = new Date().getFullYear();
+const links = [
+  { href: '/proyectos', label: 'Proyectos' },
+  { href: '/sobre-mi', label: 'Sobre mí' },
+  { href: '/diario', label: 'Diario' },
+];
+---
+
+<footer class="footer" data-reveal>
+  <nav class="footer__links" aria-label="Pie de página">
+    {
+      links.map((l) => (
+        <a class="btn-text" href={withBase(l.href)} data-fx>
+          {l.label}
+        </a>
+      ))
+    }
+    <a
+      class="btn-text"
+      href="https://github.com/escaliburcalibur/portfolio"
+      target="_blank"
+      rel="noopener"
+      data-fx
+    >
+      Código ↗
+    </a>
+  </nav>
+  <p class="footer__meta">
+    © {year}
+    {settings.wordmark} · <a
+      class="footer__mail"
+      href={`mailto:${settings.email}`}>{settings.email}</a
+    >
+  </p>
+  <a class="footer__top btn-text" href="#main" data-fx>Volver arriba ↑</a>
+</footer>
+
+<style>
+  .footer {
+    margin-block-start: var(--space-2xl);
+    padding-block: var(--space-lg);
+    border-block-start: 1px solid var(--color-line);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--pd) var(--space-lg);
+    align-items: baseline;
+    font-size: var(--text-meta);
+  }
+  .footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--pd);
+  }
+  .footer__meta {
+    color: var(--color-fg-50);
+  }
+  .footer__top {
+    margin-inline-start: auto;
+  }
+</style>

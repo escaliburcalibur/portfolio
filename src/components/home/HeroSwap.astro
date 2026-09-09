@@ -1,0 +1,142 @@
+---
+import Placeholder from '@components/Placeholder.astro';
+import { getProjects } from '@lib/content';
+
+const projects = await getProjects();
+---
+
+<section class="hero" data-hero aria-label="Proyectos destacados">
+  <div class="hero__stage">
+    {
+      projects.map((p, i) => (
+        <figure
+          class="hero__layer"
+          data-hero-layer
+          data-slug={p.id}
+          data-selected={i === 0 ? 'true' : 'false'}
+        >
+          <Placeholder ratio="1496 / 998" label={p.data.title} />
+        </figure>
+      ))
+    }
+  </div>
+  <figcaption class="hero__caption" data-hero-caption>
+    <span class="hero__title" data-fx>{projects[0]?.data.title}</span>
+    <span class="hero__desc">{projects[0]?.data.railDescription}</span>
+  </figcaption>
+</section>
+
+<style>
+  .hero {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pd-2);
+  }
+  .hero__stage {
+    position: relative;
+    inline-size: 100%;
+    aspect-ratio: 1496 / 998;
+    border-radius: var(--br-2);
+    overflow: hidden;
+  }
+  .hero__layer {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity var(--dur) var(--ease),
+      visibility var(--dur) var(--ease);
+  }
+  .hero__layer[data-selected='true'] {
+    opacity: 1;
+    visibility: visible;
+  }
+  .hero__caption {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+    align-items: baseline;
+    font-size: var(--text-small);
+  }
+  .hero__title {
+    font-weight: var(--weight-medium);
+  }
+  .hero__desc {
+    color: var(--color-fg-50);
+  }
+</style>
+
+<script>
+  const GALLERY_INTERVAL = 2400;
+
+  function initHero() {
+    const hero = document.querySelector<HTMLElement>('[data-hero]');
+    if (!hero) return;
+    const layers = [...hero.querySelectorAll<HTMLElement>('[data-hero-layer]')];
+    if (!layers.length) return;
+    const caption = hero.querySelector<HTMLElement>('[data-hero-caption]');
+    const reduce = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches;
+
+    const select = (slug: string) => {
+      layers.forEach((l) =>
+        l.setAttribute('data-selected', String(l.dataset.slug === slug)),
+      );
+      const card = document.querySelector<HTMLElement>(
+        `[data-rail-card][data-slug="${slug}"], [data-work-card][data-slug="${slug}"]`,
+      );
+      if (caption && card) {
+        const title = caption.querySelector('.hero__title');
+        const desc = caption.querySelector('.hero__desc');
+        if (title)
+          title.textContent =
+            card.querySelector('.rail-card__title, .work-card__title')
+              ?.textContent ?? title.textContent;
+        if (desc)
+          desc.textContent =
+            card.querySelector('.rail-card__desc, .work-card__meta')
+              ?.textContent ?? desc.textContent;
+      }
+    };
+
+    // Hover en las project cards del rail (solo punteros finos).
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      document
+        .querySelectorAll<HTMLElement>('[data-rail-card]')
+        .forEach((card) => {
+          card.addEventListener('pointerenter', () => {
+            const slug = card.dataset.slug;
+            if (slug) select(slug);
+          });
+        });
+    }
+
+    // Modo galería: auto-ciclo.
+    let timer: number | undefined;
+    let idx = 0;
+    const stop = () => {
+      if (timer) window.clearInterval(timer);
+      timer = undefined;
+    };
+    const start = () => {
+      if (reduce) return;
+      stop();
+      timer = window.setInterval(() => {
+        idx = (idx + 1) % layers.length;
+        select(layers[idx].dataset.slug ?? '');
+      }, GALLERY_INTERVAL);
+    };
+
+    window.addEventListener('gallery-toggle', (e) => {
+      const on = (e as CustomEvent<{ on: boolean }>).detail.on;
+      if (on) start();
+      else stop();
+    });
+    hero.addEventListener('astro:before-swap' as never, stop);
+    document.addEventListener('astro:before-swap', stop, { once: true });
+  }
+
+  document.addEventListener('astro:page-load', initHero);
+</script>

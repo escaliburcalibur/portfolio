@@ -1,0 +1,53 @@
+---
+interface CreditGroup {
+  org: string;
+  lines: { role: string; name: string }[];
+}
+interface Props {
+  credits: CreditGroup[];
+}
+const { credits } = Astro.props;
+---
+
+<div class="credits">
+  <h2 class="credits__title eyebrow" data-fx>Créditos</h2>
+  {
+    credits.map((group) => (
+      <div class="credits__group">
+        <p class="credits__org">{group.org}</p>
+        <dl class="credits__list">
+          {group.lines.map((line) => (
+            <div class="credits__row">
+              <dt>{line.role}</dt>
+              <dd>{line.name}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .credits__title {
+    margin-block-end: var(--pd);
+  }
+  .credits__group + .credits__group {
+    margin-block-start: var(--pd);
+  }
+  .credits__org {
+    font-size: var(--text-small);
+    font-weight: var(--weight-medium);
+    margin-block-end: 0.25rem;
+  }
+  .credits__row {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--pd);
+    font-size: var(--text-small);
+    padding-block: 0.15rem;
+  }
+  .credits__row dt {
+    color: var(--color-fg-50);
+  }
+</style>

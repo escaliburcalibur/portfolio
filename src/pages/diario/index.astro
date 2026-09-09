@@ -1,0 +1,46 @@
+---
+import Shell from '@layouts/Shell.astro';
+import UpdateCard from '@components/home/UpdateCard.astro';
+import { getJournal } from '@lib/content';
+import { checkDescription, type PageSeo } from '@lib/seo';
+
+const entries = await getJournal();
+
+const seo: PageSeo = {
+  title: 'Diario',
+  description: checkDescription(
+    'Novedades del estudio de David Bayón: lanzamientos de proyectos, charlas, premios y notas sobre el proceso de diseño.',
+    'diario',
+  ),
+  path: '/diario',
+};
+---
+
+<Shell {...seo}>
+  <h1 class="page-title" data-fx data-reveal-text>Diario</h1>
+  <div class="journal-grid">
+    {
+      entries.map((entry, i) => (
+        <UpdateCard entry={entry} withMedia={i % 3 === 1} />
+      ))
+    }
+  </div>
+
+  <style>
+    .journal-grid {
+      margin-block-start: var(--space-md);
+      column-count: 1;
+      column-gap: var(--pd-2);
+    }
+    @media (width >= 64rem) {
+      .journal-grid {
+        column-count: 2;
+      }
+    }
+    @media (width >= 80rem) {
+      .journal-grid {
+        column-count: 3;
+      }
+    }
+  </style>
+</Shell>

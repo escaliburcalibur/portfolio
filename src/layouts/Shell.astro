@@ -2,6 +2,7 @@
 import { fade } from 'astro:transitions';
 import Base from '@layouts/Base.astro';
 import Sidebar from '@components/sidebar/Sidebar.astro';
+import Footer from '@components/ui/Footer.astro';
 import type { PageSeo } from '@lib/seo';
 
 type Props = PageSeo;
@@ -16,6 +17,7 @@ type Props = PageSeo;
       <main id="main" class="page-container">
         <slot />
       </main>
+      <Footer />
     </div>
   </div>
 </Base>
